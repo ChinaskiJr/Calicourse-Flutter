@@ -39,26 +39,49 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            FutureBuilder<void>(
-                future: _loadShops(),
-                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return GridView.builder(
-                        shrinkWrap: true,
-                        itemCount: shops.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: Text(shops[index].name),
-                          );
-                        }
-                    );
-                  } else {
-                    return CircularProgressIndicator();
+            Container(
+              width: MediaQuery.of(context).size.width * 0.85,
+              child: FutureBuilder<void>(
+                  future: _loadShops(),
+                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: shops.length,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 25.0,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: Colors.green,
+                                        width: 2
+                                    )
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    shops[index].name,
+                                    style: TextStyle(
+                                      fontSize: globalFontSize,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                )
+                            );
+                          }
+                      );
+                    } else {
+                      return CircularProgressIndicator();
+                    }
                   }
-                }
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.95,
+              height: MediaQuery.of(context).size.height * 0.5,
             )
           ],
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
