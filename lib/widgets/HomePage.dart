@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:calicourse_front/helpers/HttpHelper.dart';
 import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/parameters/parameters.dart';
+import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -97,6 +98,7 @@ class _HomePageState extends State<HomePage> {
       this.shops = await HttpHelper.getShops();
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
     }
   }
 }
