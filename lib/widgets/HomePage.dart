@@ -29,10 +29,10 @@ class _HomePageState extends State<HomePage> {
                 header,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: FONT_SIZE
+                    fontSize: globalFontSize
                 ),
               ),
-            )
+            ),
           ],
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),

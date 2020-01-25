@@ -1,1 +1,1 @@
-const double FONT_SIZE = 18.0;
+const double globalFontSize = 16.0;
