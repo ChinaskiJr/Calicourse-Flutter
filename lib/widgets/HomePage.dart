@@ -101,6 +101,32 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),
       ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width * 0.075
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FloatingActionButton(
+              backgroundColor: secondaryColor,
+              child: Icon(
+                  Icons.add_location
+              ),
+              onPressed: () => Navigator.pushNamed(context, '/addShop'),
+              heroTag: "addShop",
+            ),
+            FloatingActionButton(
+              backgroundColor: mainColor,
+              child: Icon(
+                  Icons.add_shopping_cart
+              ),
+              onPressed: () => Navigator.pushNamed(context, '/addArticle'),
+              heroTag: "addArticle",
+            ),
+          ],
+        ),
+      )
     );
   }
 
