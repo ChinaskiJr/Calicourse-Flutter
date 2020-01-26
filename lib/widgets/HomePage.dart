@@ -6,6 +6,7 @@ import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/ArticleContainer.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
+import 'package:calicourse_front/widgets/custom_widgets/ShopContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -60,22 +61,7 @@ class _HomePageState extends State<HomePage> {
                               crossAxisSpacing: 25.0,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: secondaryColor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    shops[index].name,
-                                    style: TextStyle(
-                                      fontSize: globalFontSize,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                )
-                            );
+                            return ShopContainer(context, shops[index]);
                           }
                       );
                     } else {
