@@ -13,7 +13,7 @@ class ArticleContainer extends Container {
     decoration: BoxDecoration(
       shape: BoxShape.rectangle,
       border: Border.all(
-          width: 5.0,
+          width: 3.5,
           color: secondaryColor
       ),
       borderRadius: BorderRadius.circular(12),
@@ -27,6 +27,7 @@ class ArticleContainer extends Container {
         style: TextStyle(
           fontSize: globalFontSize,
           fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold,
           color: secondaryColor
         ),
       ),
