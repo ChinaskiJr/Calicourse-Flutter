@@ -40,7 +40,9 @@ class _HomePageState extends State<HomePage> {
                 header,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: globalFontSize
+                  fontSize: globalFontSize,
+                  color: mainColor,
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),
@@ -62,17 +64,14 @@ class _HomePageState extends State<HomePage> {
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: secondaryColor,
-                                    border: Border.all(
-                                        color: mainColor,
-                                        width: 3.5
-                                    )
                                 ),
                                 child: Center(
                                   child: Text(
                                     shops[index].name,
                                     style: TextStyle(
                                       fontSize: globalFontSize,
-                                      color: mainColor
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold
                                     ),
                                   ),
                                 )
@@ -101,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                           child: articleContainer,
                           feedback: articleContainer,
                           childWhenDragging: Container(
-                              height: MediaQuery.of(context).size.height * 0.075 + 10
+                              height: MediaQuery.of(context).size.height * 0.065 + 10
                           ),
                         );
                       }

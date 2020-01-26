@@ -5,17 +5,13 @@ import 'package:flutter/material.dart';
 class ArticleContainer extends Container {
   ArticleContainer(BuildContext context, Article article): super(
     width: MediaQuery.of(context).size.width * 0.6,
-    height: MediaQuery.of(context).size.height * 0.075,
+    height: MediaQuery.of(context).size.height * 0.065,
     padding: EdgeInsets.all(15.0),
     margin: EdgeInsets.symmetric(
         vertical: 5.0,
     ),
     decoration: BoxDecoration(
       shape: BoxShape.rectangle,
-      border: Border.all(
-          width: 3.5,
-          color: secondaryColor
-      ),
       borderRadius: BorderRadius.circular(12),
       color: mainColor,
     ),
@@ -28,7 +24,7 @@ class ArticleContainer extends Container {
           fontSize: globalFontSize,
           fontStyle: FontStyle.italic,
           fontWeight: FontWeight.bold,
-          color: secondaryColor
+          color: Colors.white
         ),
       ),
     ),
