@@ -11,7 +11,7 @@ class HttpHelper {
   static const apiParamGetAllArticles   = "/articles";
 
   /// Performs the GET all shops request to the API
-  /// Throws [HttpException] if statusCode isn't 200
+  /// Throws [HttpException] if [response.statusCode] isn't 200
   static Future<List<Shop>> getShops() async {
     dynamic jsonResponse;
     http.Response response = await http.get(apiBaseUrl + apiParamGetAllShops,
@@ -28,7 +28,8 @@ class HttpHelper {
     }
     return shops;
   }
-
+  /// Performs the GET all articles requests to the API
+  /// Throws [HttpException] if [response.statusCode] isn't 20O
   static Future<List<Article>> getArticles() async {
     dynamic jsonResponse;
     http.Response response = await http.get(apiBaseUrl + apiParamGetAllArticles,
