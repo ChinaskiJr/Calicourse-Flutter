@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:calicourse_front/helpers/HttpHelper.dart';
+import 'package:calicourse_front/models/Article.dart';
 import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +21,8 @@ class _HomePageState extends State<HomePage> {
 
   static const String header = "La fierté d'avoir le contrôle sur les données de sa liste de courses";
 
-  List<Shop> shops;
+  List<Shop>      shops = [];
+  List<Article>   articles = [];
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                        color: Colors.green,
+                                        color: mainColor,
                                         width: 2
                                     )
                                 ),
@@ -83,6 +86,46 @@ class _HomePageState extends State<HomePage> {
             Container(
               width: MediaQuery.of(context).size.width * 0.95,
               height: MediaQuery.of(context).size.height * 0.5,
+              child: FutureBuilder<void>(
+                future: _loadArticles(),
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: articles.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          child: Container(
+                            padding: EdgeInsets.all(15.0),
+                            margin: EdgeInsets.symmetric(
+                              vertical: 5.0,
+                              horizontal: MediaQuery.of(context).size.width * 0.2
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                width: 2.0,
+                                color: secondaryColor
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              articles[index].title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: globalFontSize,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+              ),
             )
           ],
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -96,6 +139,15 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadShops() async {
     try {
       this.shops = await HttpHelper.getShops();
+    } on HttpException catch(exception, stackTrace) {
+      print(stackTrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
+    }
+  }
+
+  Future<void> _loadArticles() async {
+    try {
+      this.articles = await HttpHelper.getArticles();
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
       FatalAlertDialog.showFatalError(exception.message, context);
