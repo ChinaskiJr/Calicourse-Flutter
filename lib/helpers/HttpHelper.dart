@@ -9,6 +9,7 @@ class HttpHelper {
   static const apiBaseUrl               = "http://192.168.1.35:8080/calicourse/api";
   static const apiParamGetAllShops      = "/shops";
   static const apiParamGetAllArticles   = "/articles";
+  static const apiParamPostArticle      = "/articles";
 
   /// Performs the GET all shops request to the API
   /// Throws [HttpException] if [response.statusCode] isn't 200
@@ -45,5 +46,17 @@ class HttpHelper {
       articles.add(article);
     }
     return articles;
+  }
+  /// Performs the POST new article request to the API
+  /// Throws [HttpException] if [response.statusCode] isn't 201
+  static Future<void> postArticle(Article article) async {
+    Map<String, dynamic> jsonArticle = article.toJson();
+    http.Response response = await http.post(apiBaseUrl + apiParamPostArticle,
+      headers: {"Content-Type" : "application/json"},
+      body:    convert.jsonEncode(jsonArticle)
+    );
+    if (response.statusCode != HttpStatus.created) {
+      throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})\n${response.body}");
+    }
   }
 }

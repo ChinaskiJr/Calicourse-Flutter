@@ -140,7 +140,8 @@ class _HomePageState extends State<HomePage> {
       FatalAlertDialog.showFatalError(exception.message, context);
     }
   }
-
+  /// Between the Http call and the building of the [FutureBuilder].
+  /// Purpose of this function is to properly manage the [HttpException]
   Future<void> _loadArticles() async {
     try {
       this.articles = await HttpHelper.getArticles();
