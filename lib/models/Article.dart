@@ -1,3 +1,4 @@
+import 'package:calicourse_front/helpers/DateTimeHelper.dart';
 import 'package:calicourse_front/models/Shop.dart';
 
 class Article {
@@ -23,9 +24,9 @@ class Article {
       title:      json['title'],
       bought:     json['bought'],
       archived:   json['archived'],
-      createdAt:  json['createdAt'],
-      boughtAt:   json['boughtAt'],
-      comment:    json['comment'],
+      createdAt:  DateTimeHelper.createDateTimeFromApiString(json['createdAt']),
+      boughtAt:   (json.containsKey('boughtAt')) ? DateTimeHelper.createDateTimeFromApiString(json['boughtAt']) : null,
+      comment:    (json.containsKey('comment')) ? json['comment'] : null,
     );
   }
 

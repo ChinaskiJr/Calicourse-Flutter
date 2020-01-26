@@ -1,18 +1,20 @@
 import 'dart:io';
 
+import 'package:calicourse_front/models/Article.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:calicourse_front/models/Shop.dart';
 
 class HttpHelper {
-  static const apiBaseUrl = "http://192.168.1.35:8080/calicourse/api";
-  static const ApiParamGetAllShops = "/shops";
+  static const apiBaseUrl               = "http://192.168.1.35:8080/calicourse/api";
+  static const apiParamGetAllShops      = "/shops";
+  static const apiParamGetAllArticles   = "/articles";
 
   /// Performs the GET all shops request to the API
   /// Throws [HttpException] if statusCode isn't 200
   static Future<List<Shop>> getShops() async {
     dynamic jsonResponse;
-    http.Response response = await http.get(apiBaseUrl + ApiParamGetAllShops,
+    http.Response response = await http.get(apiBaseUrl + apiParamGetAllShops,
         headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
@@ -25,5 +27,22 @@ class HttpHelper {
       shops.add(shop);
     }
     return shops;
+  }
+
+  static Future<List<Article>> getArticles() async {
+    dynamic jsonResponse;
+    http.Response response = await http.get(apiBaseUrl + apiParamGetAllArticles,
+      headers: {"Accept": "application/json"});
+    if (response.statusCode == HttpStatus.ok) {
+      jsonResponse = convert.jsonDecode(response.body);
+    } else {
+      throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
+    }
+    List<Article> articles = [];
+    for (Map map in jsonResponse) {
+      Article article = Article.fromJson(map);
+      articles.add(article);
+    }
+    return articles;
   }
 }
