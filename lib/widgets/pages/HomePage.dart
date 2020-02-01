@@ -61,26 +61,35 @@ class _HomePageState extends State<HomePage> {
                               crossAxisSpacing: 25.0,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            return DragTarget(
-                              builder: (context, List<String> candidateData, rejectedData) {
-                                return ShopContainer(context, shops[index]);
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/showShop',
+                                  arguments: this.shops[index].id.toString()
+                                );
                               },
-                              onWillAccept: (data) => true,
-                              onAccept: (data) async {
-                                // Data is the id of the article dropped
-                                Article articleDropped =
+                              child: DragTarget(
+                                builder: (context, List<String> candidateData, rejectedData) {
+                                  return ShopContainer(context, shops[index]);
+                                },
+                                onWillAccept: (data) => true,
+                                onAccept: (data) async {
+                                  // Data is the id of the article dropped
+                                  Article articleDropped =
                                   articles.firstWhere((Article article) {
                                     return article.id.toString() == data;
                                   });
-                                shops[index].articles.add(articleDropped);
-                                await _processPutShop(shops[index]);
-                                setState(() {
-                                  articles.removeWhere((Article article) {
-                                    return article.id == articleDropped.id;
+                                  shops[index].articles.add(articleDropped);
+                                  await _processPutShop(shops[index]);
+                                  setState(() {
+                                    articles.removeWhere((Article article) {
+                                      return article.id == articleDropped.id;
+                                    });
+                                    print(articles);
                                   });
-                                  print(articles);
-                                });
-                              }
+                                }
+                              ),
                             );
                           }
                       );

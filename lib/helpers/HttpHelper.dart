@@ -8,9 +8,22 @@ import 'package:calicourse_front/models/Shop.dart';
 class HttpHelper {
   static const apiBaseUrl               = "http://192.168.1.35:8080/calicourse/api";
   static const apiParamGetAllShops      = "/shops";
+  static const apiParamGetAShop         = "/shops/";
   static const apiParamPutShop          = "/shops";
   static const apiParamGetAllArticles   = "/articles";
   static const apiParamPostArticle      = "/articles";
+
+  static Future<Shop> getShop(String shopId) async {
+    dynamic jsonResponse;
+    http.Response response = await http.get(apiBaseUrl + apiParamGetAShop + shopId,
+      headers: {"Accept": "application/json"});
+    if (response.statusCode == HttpStatus.ok) {
+      jsonResponse = convert.jsonDecode(response.body);
+    } else {
+      throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
+    }
+    return Shop.fromJson(jsonResponse);
+  }
 
   /// Performs the GET all shops request to the API
   /// Throws [HttpException] if [response.statusCode] isn't 200
