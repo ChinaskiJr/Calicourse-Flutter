@@ -1,9 +1,9 @@
 import 'package:calicourse_front/parameters/parameters.dart';
-import 'package:calicourse_front/widgets/AddArticlePage.dart';
-import 'package:calicourse_front/widgets/HomePage.dart';
+import 'package:calicourse_front/widgets/pages/AddArticlePage.dart';
+import 'package:calicourse_front/widgets/pages/HomePage.dart';
 import 'package:flutter/material.dart';
 
-import 'widgets/custom_widgets/AddShopPage.dart';
+import 'widgets/pages/AddShopPage.dart';
 
 void main() => runApp(MyApp());
 
