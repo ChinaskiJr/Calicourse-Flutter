@@ -61,7 +61,27 @@ class _HomePageState extends State<HomePage> {
                               crossAxisSpacing: 25.0,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            return ShopContainer(context, shops[index]);
+                            return DragTarget(
+                              builder: (context, List<String> candidateData, rejectedData) {
+                                return ShopContainer(context, shops[index]);
+                              },
+                              onWillAccept: (data) => true,
+                              onAccept: (data) async {
+                                // Data is the id of the article dropped
+                                Article articleDropped =
+                                  articles.firstWhere((Article article) {
+                                    return article.id.toString() == data;
+                                  });
+                                shops[index].articles.add(articleDropped);
+                                await _processPutShop(shops[index]);
+                                setState(() {
+                                  articles.removeWhere((Article article) {
+                                    return article.id == articleDropped.id;
+                                  });
+                                  print(articles);
+                                });
+                              }
+                            );
                           }
                       );
                     } else {
@@ -74,7 +94,7 @@ class _HomePageState extends State<HomePage> {
               width: MediaQuery.of(context).size.width * 0.6,
               height: MediaQuery.of(context).size.height * 0.5,
               child: FutureBuilder<void>(
-                future: _loadArticles(),
+                future: _loadArticlesWithNoShop(),
                 builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return ListView.builder(
@@ -88,6 +108,7 @@ class _HomePageState extends State<HomePage> {
                           childWhenDragging: Container(
                               height: MediaQuery.of(context).size.height * 0.065 + 10
                           ),
+                          data: articles[index].id.toString(),
                         );
                       }
                     );
@@ -142,9 +163,22 @@ class _HomePageState extends State<HomePage> {
   }
   /// Between the Http call and the building of the [FutureBuilder].
   /// Purpose of this function is to properly manage the [HttpException]
-  Future<void> _loadArticles() async {
+  Future<void> _loadArticlesWithNoShop() async {
     try {
-      this.articles = await HttpHelper.getArticles();
+      List<Article> allArticles = await HttpHelper.getArticles();
+      this.articles = allArticles.where((Article article) {
+        return article.shop == null;
+      }).toList();
+    } on HttpException catch(exception, stackTrace) {
+      print(stackTrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
+    }
+  }
+  /// Between the Http call and the refresh of the [FutureBuilder].
+  /// Purpose of this function is to properly manage the [HttpException]
+  Future<void> _processPutShop(Shop shop) async {
+    try {
+      await HttpHelper.putShop(shop);
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
       FatalAlertDialog.showFatalError(exception.message, context);
