@@ -2,6 +2,8 @@ import 'package:calicourse_front/helpers/DateTimeHelper.dart';
 import 'package:calicourse_front/models/Shop.dart';
 
 class Article {
+  static const articleIri = '/api/articles/';
+
   int       id;
   String    title;
   bool      bought;
@@ -38,6 +40,11 @@ class Article {
         ? DateTimeHelper.createDateTimeFromApiString(json['boughtAt'])
         : null,
       comment:    (json.containsKey('comment')) ? json['comment'] : null,
+      shop:       (json.containsKey('shop') && json['shop'] != null)
+        ? Shop.build(
+          id:         json['shop']['id'],
+          name:       json['shop']['name'])
+        : null
     );
   }
 

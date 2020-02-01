@@ -8,6 +8,7 @@ import 'package:calicourse_front/models/Shop.dart';
 class HttpHelper {
   static const apiBaseUrl               = "http://192.168.1.35:8080/calicourse/api";
   static const apiParamGetAllShops      = "/shops";
+  static const apiParamPutShop          = "/shops";
   static const apiParamGetAllArticles   = "/articles";
   static const apiParamPostArticle      = "/articles";
 
@@ -29,7 +30,19 @@ class HttpHelper {
     }
     return shops;
   }
-  /// Performs the GET all articles requests to the API
+  /// Performs the PUT a shop request to the API
+  /// Throws [HttpException] if [response.statusCode] isn't 20O
+  static Future<void> putShop(Shop shop) async {
+    Map<String, dynamic> jsonShop = shop.toJson();
+    http.Response response = await http.put(apiBaseUrl + apiParamPutShop + '/' + shop.id.toString(),
+      headers: {"Content-Type": "application/json"},
+      body: convert.jsonEncode(jsonShop)
+    );
+    if (response.statusCode != HttpStatus.ok) {
+      throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode}");
+    }
+  }
+  /// Performs the GET all articles request to the API
   /// Throws [HttpException] if [response.statusCode] isn't 20O
   static Future<List<Article>> getArticles() async {
     dynamic jsonResponse;
