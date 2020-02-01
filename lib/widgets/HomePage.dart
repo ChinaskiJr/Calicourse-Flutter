@@ -85,7 +85,13 @@ class _HomePageState extends State<HomePage> {
                           }
                       );
                     } else {
-                      return CircularProgressIndicator();
+                      return SizedBox(
+                        height: 40.0,
+                        width: 40.0,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     }
                   }
               ),
@@ -113,7 +119,13 @@ class _HomePageState extends State<HomePage> {
                       }
                     );
                   } else {
-                    return CircularProgressIndicator();
+                    return SizedBox(
+                      height: 40.0,
+                      width: 40.0,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
                   }
                 },
               ),
