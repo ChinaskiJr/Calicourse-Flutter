@@ -34,7 +34,9 @@ class Article {
       bought:     json['bought'],
       archived:   json['archived'],
       createdAt:  DateTimeHelper.createDateTimeFromApiString(json['createdAt']),
-      boughtAt:   (json.containsKey('boughtAt')) ? DateTimeHelper.createDateTimeFromApiString(json['boughtAt']) : null,
+      boughtAt:   (json.containsKey('boughtAt') && json['boughtAt'] != null)
+        ? DateTimeHelper.createDateTimeFromApiString(json['boughtAt'])
+        : null,
       comment:    (json.containsKey('comment')) ? json['comment'] : null,
     );
   }
