@@ -12,6 +12,7 @@ class HttpHelper {
   static const apiParamPutShop          = "/shops";
   static const apiParamGetAllArticles   = "/articles";
   static const apiParamPostArticle      = "/articles";
+  static const apiParamPutArticle       = "/articles";
 
   static Future<Shop> getShop(String shopId) async {
     dynamic jsonResponse;
@@ -52,7 +53,7 @@ class HttpHelper {
       body: convert.jsonEncode(jsonShop)
     );
     if (response.statusCode != HttpStatus.ok) {
-      throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode}");
+      throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
   /// Performs the GET all articles request to the API
@@ -82,7 +83,19 @@ class HttpHelper {
       body:    convert.jsonEncode(jsonArticle)
     );
     if (response.statusCode != HttpStatus.created) {
-      throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})\n${response.body}");
+      throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})");
+    }
+  }
+  /// Performs the PUT new article request to the API
+  /// Throws [HttpException] if [response.statusCode] isn't 200
+  static Future<void> putArticle(Article article) async {
+    Map<String, dynamic> jsonArticle = article.toJson();
+    http.Response response = await http.put(apiBaseUrl + apiParamPutArticle + '/' + article.id.toString(),
+      headers: {"Content-Type" : "application/json"},
+      body:    convert.jsonEncode(jsonArticle)
+    );
+    if (response.statusCode != HttpStatus.ok) {
+      throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
 }

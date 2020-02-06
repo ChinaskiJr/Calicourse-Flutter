@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:calicourse_front/helpers/HttpHelper.dart';
+import 'package:calicourse_front/models/Article.dart';
 import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +24,9 @@ class _ShopPageState extends State<ShopPage> {
   Widget build(BuildContext context) {
     final String shopId = ModalRoute.of(context).settings.arguments;
 
-    _loadShop(shopId);
+    if (shop.id == null) {
+      _loadShop(shopId);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -40,46 +43,64 @@ class _ShopPageState extends State<ShopPage> {
                 itemBuilder: (BuildContext context, int index) {
                   displayCommentPressed.add(false);
                   trailingIcons.add(Icons.keyboard_arrow_down);
-                  return Dismissible(
-                    key: ValueKey('article_' + shop.articles[index].id.toString()),
-                    child: Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(
-                                shop.articles[index].title
+                  // ARTICLES TO BUY
+                  if (!shop.articles[index].bought) {
+                    return Dismissible(
+                      key: ValueKey('article_' + shop.articles[index].id.toString()),
+                      background: Card(
+                        color: Colors.green,
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        )
+                      ),
+                      onDismissed: (DismissDirection direction) async {
+                        setState(() {
+                          shop.articles[index].bought = true;
+                        });
+                        await _processPutArticle(shop.articles[index]);
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                  shop.articles[index].title
+                                ),
+                                trailing: (shop.articles[index].comment.isNotEmpty)
+                                  ? IconButton(
+                                  icon: Icon(trailingIcons[index]),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (displayCommentPressed[index] == true) {
+                                        displayCommentPressed[index] = false;
+                                        trailingIcons[index] = Icons.keyboard_arrow_down;
+                                      } else {
+                                        displayCommentPressed[index] = true;
+                                        trailingIcons[index] = Icons.keyboard_arrow_up;
+                                      }
+                                    });
+                                  })
+                                  : null,
                               ),
-                              trailing: (shop.articles[index].comment.isNotEmpty)
-                                ? IconButton(
-                                icon: Icon(trailingIcons[index]),
-                                onPressed: () {
-                                  setState(() {
-                                    if (displayCommentPressed[index] == true) {
-                                      displayCommentPressed[index] = false;
-                                      trailingIcons[index] = Icons.keyboard_arrow_down;
-                                    } else {
-                                      displayCommentPressed[index] = true;
-                                      trailingIcons[index] = Icons.keyboard_arrow_up;
-                                    }
-                                  });
-                                })
-                                : null,
-                            ),
-                            (displayCommentPressed[index])
-                              ? Padding(
-                                  padding: EdgeInsets.only(bottom: 10.0),
-                                  child: Text(shop.articles[index].comment),
-                                )
-                              : Container()
-                          ],
-                        ),
+                              (displayCommentPressed[index])
+                                ? Padding(
+                                padding: EdgeInsets.only(bottom: 10.0),
+                                child: Text(shop.articles[index].comment),
+                              )
+                                : Container()
+                            ],
+                          ),
+                        )
                       )
-                    )
-                  );
+                    );
+                  } else {
+                    return Container();
+                  }
                 })
-            )
+            ),
           ],
         ),
       )
@@ -93,6 +114,16 @@ class _ShopPageState extends State<ShopPage> {
       setState(() {
         this.shop = shop;
       });
+    } on HttpException catch(exception, stackTrace) {
+      print(stackTrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
+    }
+  }
+  /// Process the PUT request to the API
+  /// Purpose of this function is to properly manage the [HttpException]
+  Future<void> _processPutArticle(Article article) async {
+    try {
+      await HttpHelper.putArticle(article);
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
       FatalAlertDialog.showFatalError(exception.message, context);
