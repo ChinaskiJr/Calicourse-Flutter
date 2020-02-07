@@ -27,7 +27,6 @@ class _ShopPageState extends State<ShopPage> {
     if (shop.id == null) {
       _loadShop(shopId);
     }
-    // TODO : Refactoriser les deux ListView (au moins les Cards)
     return Scaffold(
       appBar: AppBar(
         title: (shop.id == null) ? CircularProgressIndicator() : Text(shop.name),
@@ -39,12 +38,15 @@ class _ShopPageState extends State<ShopPage> {
               padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.05),
               child: Column(
                 children: <Widget>[
-                  Text(
-                    "À acheter",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 7.5),
+                    child: Text(
+                      "À acheter",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                   ),
                   ListView.builder(
@@ -62,18 +64,9 @@ class _ShopPageState extends State<ShopPage> {
                             color: Colors.green,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 35.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                  ),
-                                  Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                  )
-                                ],
+                              child: Icon(
+                                Icons.check,
+                                color: Colors.white,
                               ),
                             )
                           ),
@@ -130,13 +123,16 @@ class _ShopPageState extends State<ShopPage> {
               padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.05),
               child: Column(
                 children: <Widget>[
-                  Text(
-                    "Acheté",
-                    style: TextStyle(
-                      color: Colors.blueGrey,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
+                  Padding(
+                    child: Text(
+                      "Acheté",
+                      style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
+                    padding: EdgeInsets.only(bottom: 7.5),
                   ),
                   ListView.builder(
                     shrinkWrap: true,
@@ -153,18 +149,9 @@ class _ShopPageState extends State<ShopPage> {
                             color: Colors.blue,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 35.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.add_shopping_cart,
-                                    color: Colors.white,
-                                  ),
-                                  Icon(
-                                    Icons.add_shopping_cart,
-                                    color: Colors.white,
-                                  )
-                                ],
+                              child:  Icon(
+                                Icons.add_shopping_cart,
+                                color: Colors.white,
                               ),
                             )
                           ),
@@ -189,7 +176,10 @@ class _ShopPageState extends State<ShopPage> {
                                     ),
                                     trailing: (shop.articles[index].comment.isNotEmpty)
                                       ? IconButton(
-                                      icon: Icon(trailingIcons[index]),
+                                      icon: Icon(
+                                        trailingIcons[index],
+                                        color: Colors.white,
+                                      ),
                                       onPressed: () {
                                         setState(() {
                                           if (displayCommentPressed[index] == true) {
@@ -206,7 +196,12 @@ class _ShopPageState extends State<ShopPage> {
                                   (displayCommentPressed[index])
                                     ? Padding(
                                     padding: EdgeInsets.only(bottom: 10.0),
-                                    child: Text(shop.articles[index].comment),
+                                    child: Text(
+                                      shop.articles[index].comment,
+                                      style: TextStyle(
+                                        color: Colors.white
+                                      ),
+                                    ),
                                   )
                                     : Container()
                                 ],
