@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ArticleContainer extends Container {
   ArticleContainer(BuildContext context, Article article): super(
     width: MediaQuery.of(context).size.width * 0.6,
-    height: MediaQuery.of(context).size.height * 0.065,
+    height: MediaQuery.of(context).size.height * 0.075,
     padding: EdgeInsets.all(15.0),
     margin: EdgeInsets.symmetric(
         vertical: 5.0,
