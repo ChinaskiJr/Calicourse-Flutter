@@ -51,6 +51,7 @@ class ArticlePageState extends State<ArticlePage>{
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               TextFormField(
                 controller: _titleFieldConstructor,

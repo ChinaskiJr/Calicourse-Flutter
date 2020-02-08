@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:calicourse_front/helpers/HttpHelper.dart';
 import 'package:calicourse_front/models/Article.dart';
 import 'package:calicourse_front/models/Shop.dart';
+import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class _ShopPageState extends State<ShopPage> {
                     child: Text(
                       "À acheter",
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: mainColor,
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold
                       ),
@@ -61,7 +62,7 @@ class _ShopPageState extends State<ShopPage> {
                         return Dismissible(
                           key: ValueKey('article_' + shop.articles[index].id.toString()),
                           background: Card(
-                            color: Colors.green,
+                            color: Color.fromARGB(255, 0, 156, 122),
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 35.0),
                               child: Icon(
@@ -154,7 +155,7 @@ class _ShopPageState extends State<ShopPage> {
                         return Dismissible(
                           key: ValueKey('article_' + shop.articles[index].id.toString()),
                           background: Card(
-                            color: Colors.blue,
+                            color: secondaryColor,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 35.0),
                               child:  Icon(
