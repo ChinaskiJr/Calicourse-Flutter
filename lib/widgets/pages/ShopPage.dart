@@ -88,7 +88,7 @@ class _ShopPageState extends State<ShopPage> {
                                     ),
                                     onLongPress: () async {
                                       bool refresh = await _updateArticleWidget(shop.articles[index]);
-                                      if (refresh) {
+                                      if (refresh != null && refresh) {
                                         setState(() {
                                           _loadShop(shopId);
                                         });
@@ -183,6 +183,14 @@ class _ShopPageState extends State<ShopPage> {
                                         color: Colors.white
                                       ),
                                     ),
+                                    onLongPress: () async {
+                                      bool refresh = await _updateArticleWidget(shop.articles[index]);
+                                      if (refresh != null && refresh) {
+                                        setState(() {
+                                          _loadShop(shopId);
+                                        });
+                                      }
+                                    },
                                     trailing: (shop.articles[index].comment.isNotEmpty)
                                       ? IconButton(
                                       icon: Icon(
@@ -253,13 +261,12 @@ class _ShopPageState extends State<ShopPage> {
       FatalAlertDialog.showFatalError(exception.message, context);
     }
   }
-//// Follow the road to the formPage with an article to update
-  Future<bool> _updateArticleWidget(Article article) async {
-    var refresh = await Navigator.pushNamed(
+  /// Follow the road to the formPage with an article to update
+  Future<dynamic> _updateArticleWidget(Article article) async {
+    return await Navigator.pushNamed(
       context,
       '/updateArticle',
       arguments: article
     );
-    return refresh;
   }
 }
