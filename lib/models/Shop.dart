@@ -26,11 +26,13 @@ class Shop {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['id'] = this.id;
-    json['name'] = this.name;
+    json['id']    = this.id;
+    json['name']  = this.name;
     List<String> articlesIRIs = [];
-    for (Article article in this.articles) {
-      articlesIRIs.add(Article.articleIri + article.id.toString());
+    if (this.articles != null) {
+      for (Article article in this.articles) {
+        articlesIRIs.add(Article.articleIri + article.id.toString());
+      }
     }
     json['articles'] = articlesIRIs;
     return json;

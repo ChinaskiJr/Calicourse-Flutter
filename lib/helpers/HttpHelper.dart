@@ -10,6 +10,7 @@ class HttpHelper {
   static const apiParamGetAllShops      = "/shops";
   static const apiParamGetAShop         = "/shops/";
   static const apiParamPutShop          = "/shops";
+  static const apiParamPostShop         = "/shops";
   static const apiParamGetAllArticles   = "/articles";
   static const apiParamPostArticle      = "/articles";
   static const apiParamPutArticle       = "/articles";
@@ -57,6 +58,18 @@ class HttpHelper {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
+
+  static Future<void> postShop(Shop shop) async {
+    Map<String, dynamic> jsonArticle = shop.toJson();
+    http.Response response = await http.post(apiBaseUrl + apiParamPostShop,
+      headers: {"Content-Type" : "application/json"},
+      body:    convert.jsonEncode(jsonArticle)
+    );
+    if (response.statusCode != HttpStatus.created) {
+      throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})");
+    }
+  }
+
   /// Performs the GET all articles request to the API
   /// Throws [HttpException] if [response.statusCode] isn't 20O
   static Future<List<Article>> getArticles() async {
