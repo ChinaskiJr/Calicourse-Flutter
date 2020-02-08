@@ -85,6 +85,7 @@ class _ShopPageState extends State<ShopPage> {
                                     title: Text(
                                       shop.articles[index].title
                                     ),
+                                    onLongPress: () => _updateArticleWidget(shop.articles[index]),
                                     trailing: (shop.articles[index].comment.isNotEmpty)
                                       ? IconButton(
                                       icon: Icon(trailingIcons[index]),
@@ -243,5 +244,13 @@ class _ShopPageState extends State<ShopPage> {
       print(stackTrace);
       FatalAlertDialog.showFatalError(exception.message, context);
     }
+  }
+//// Follow the road to the formPage with an article to update
+  _updateArticleWidget(Article article) {
+    Navigator.pushNamed(
+      context,
+      '/updateArticle',
+      arguments: article
+    );
   }
 }

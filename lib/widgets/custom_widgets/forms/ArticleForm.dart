@@ -8,17 +8,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ArticleForm extends StatefulWidget {
+  Article article;
+
   @override
   State<StatefulWidget> createState() {
     return ArticleFormState();
+  }
+
+  ArticleForm({article: Article}) {
+    this.article = article;
   }
 }
 
 class ArticleFormState extends State<ArticleForm>{
 
   final _formKey = GlobalKey<FormState>();
-  final _titleFieldConstructor = TextEditingController();
-  final _commentFieldConstructor = TextEditingController();
+  TextEditingController _titleFieldConstructor;
+  TextEditingController _commentFieldConstructor;
 
   @override
   void dispose() {
@@ -29,6 +35,12 @@ class ArticleFormState extends State<ArticleForm>{
 
   @override
   Widget build(BuildContext context) {
+    _titleFieldConstructor = TextEditingController(
+      text: (widget.article != null) ? widget.article.title : ''
+    );
+    _commentFieldConstructor = TextEditingController(
+      text: (widget.article != null) ? widget.article.comment : ''
+    );
     return Form(
       key: _formKey,
       child: Column(
@@ -61,8 +73,8 @@ class ArticleFormState extends State<ArticleForm>{
           Padding(
             padding: EdgeInsets.only(top: 15.0),
             child: RaisedButton(
-              child: const Text(
-                'Ajouter',
+              child: Text(
+                (widget.article == null) ? 'Ajouter' : 'Modifier',
                 style: TextStyle(
                   color: Colors.white
                 ),
@@ -71,16 +83,30 @@ class ArticleFormState extends State<ArticleForm>{
               splashColor: Colors.white,
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
-                  Article article = Article.create(
-                    _titleFieldConstructor.text,
-                    _commentFieldConstructor.text
-                  );
-                  Scaffold.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text("Traitement en cours...")
-                    )
-                  );
-                  await _processAddArticle(article);
+                  // New Article ?
+                  if (widget.article == null) {
+                    Article article = Article.create(
+                      _titleFieldConstructor.text,
+                      _commentFieldConstructor.text
+                    );
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("Traitement en cours...")
+                      )
+                    );
+                    await _processAddArticle(article);
+                  } else {
+                    Article article = widget.article;
+                    article.title = _titleFieldConstructor.text;
+                    article.comment = _commentFieldConstructor.text;
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("Traitement en cours...")
+                      )
+                    );
+                    await _processPutArticle(article);
+                  }
+
                   Navigator.pop(context);
                 }
               },
@@ -95,6 +121,16 @@ class ArticleFormState extends State<ArticleForm>{
   Future<void> _processAddArticle(Article article) async {
     try {
       await HttpHelper.postArticle(article);
+    } on HttpException catch (exception, stacktrace) {
+      print(stacktrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
+    }
+  }
+  /// Between the Http call and the Navigator.pop.
+  /// Purpose of this function is to properly manage the [HttpException]
+  Future<void> _processPutArticle(Article article) async {
+    try {
+      await HttpHelper.putArticle(article);
     } on HttpException catch (exception, stacktrace) {
       print(stacktrace);
       FatalAlertDialog.showFatalError(exception.message, context);
