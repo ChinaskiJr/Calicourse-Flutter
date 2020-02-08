@@ -85,7 +85,14 @@ class _ShopPageState extends State<ShopPage> {
                                     title: Text(
                                       shop.articles[index].title
                                     ),
-                                    onLongPress: () => _updateArticleWidget(shop.articles[index]),
+                                    onLongPress: () async {
+                                      bool refresh = await _updateArticleWidget(shop.articles[index]);
+                                      if (refresh) {
+                                        setState(() {
+                                          _loadShop(shopId);
+                                        });
+                                      }
+                                    },
                                     trailing: (shop.articles[index].comment.isNotEmpty)
                                       ? IconButton(
                                       icon: Icon(trailingIcons[index]),
@@ -246,11 +253,12 @@ class _ShopPageState extends State<ShopPage> {
     }
   }
 //// Follow the road to the formPage with an article to update
-  _updateArticleWidget(Article article) {
-    Navigator.pushNamed(
+  Future<bool> _updateArticleWidget(Article article) async {
+    var refresh = await Navigator.pushNamed(
       context,
       '/updateArticle',
       arguments: article
     );
+    return refresh;
   }
 }

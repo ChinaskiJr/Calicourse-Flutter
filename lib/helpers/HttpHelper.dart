@@ -13,6 +13,7 @@ class HttpHelper {
   static const apiParamGetAllArticles   = "/articles";
   static const apiParamPostArticle      = "/articles";
   static const apiParamPutArticle       = "/articles";
+  static const apiParamDeleteArticle    = "/articles";
 
   static Future<Shop> getShop(String shopId) async {
     dynamic jsonResponse;
@@ -95,6 +96,16 @@ class HttpHelper {
       body:    convert.jsonEncode(jsonArticle)
     );
     if (response.statusCode != HttpStatus.ok) {
+      throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
+    }
+  }
+  /// Performs the DELETE article request to the API
+  /// Throws [HttpException] if [response.statusCode] isn't 204
+  static Future<void> deleteArticle(Article article) async {
+    http.Response response = await http.delete(apiBaseUrl + apiParamDeleteArticle + '/' + article.id.toString(),
+      headers: {"Content-Type" : "application/json"}
+    );
+    if (response.statusCode != HttpStatus.noContent) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }

@@ -1,8 +1,7 @@
 import 'package:calicourse_front/parameters/parameters.dart';
-import 'package:calicourse_front/widgets/pages/AddArticlePage.dart';
+import 'package:calicourse_front/widgets/pages/ArticlePage.dart';
 import 'package:calicourse_front/widgets/pages/HomePage.dart';
 import 'package:calicourse_front/widgets/pages/ShopPage.dart';
-import 'package:calicourse_front/widgets/pages/UpdateArticlePage.dart';
 import 'package:flutter/material.dart';
 
 import 'widgets/pages/AddShopPage.dart';
@@ -20,8 +19,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/':              (context)     => HomePage(title: 'Calicourse'),
-        '/addArticle':    (context)     => AddArticlePage(),
-        '/updateArticle': (context)     => UpdateArticlePage(),
+        '/addArticle':    (context)     => ArticlePage(),
+        '/updateArticle': (context)     => ArticlePage(),
         '/addShop':       (context)     => AddShopPage(),
         '/showShop':      (context)     => ShopPage(),
       },
