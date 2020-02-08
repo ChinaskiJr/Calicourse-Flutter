@@ -17,6 +17,8 @@ class ShopContainer extends Container {
               fontWeight: FontWeight.bold
           ),
         ),
-      )
+      ),
+    width: MediaQuery.of(context).size.width * 0.25,
+    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02)
   );
 }

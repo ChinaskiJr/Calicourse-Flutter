@@ -53,45 +53,49 @@ class _HomePageState extends State<HomePage> {
                   future: _loadShops(),
                   builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: shops.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 25.0,
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/showShop',
-                                  arguments: this.shops[index].id.toString()
-                                );
-                              },
-                              child: DragTarget(
-                                builder: (context, List<String> candidateData, rejectedData) {
-                                  return ShopContainer(context, shops[index]);
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ListView.builder(
+
+                            shrinkWrap: true,
+                            itemCount: shops.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/showShop',
+                                    arguments: this.shops[index].id.toString()
+                                  );
                                 },
-                                onWillAccept: (data) => true,
-                                onAccept: (data) async {
-                                  // Data is the id of the article dropped
-                                  Article articleDropped =
-                                  articles.firstWhere((Article article) {
-                                    return article.id.toString() == data;
-                                  });
-                                  shops[index].articles.add(articleDropped);
-                                  await _processPutShop(shops[index]);
-                                  setState(() {
-                                    articles.removeWhere((Article article) {
-                                      return article.id == articleDropped.id;
+                                child: DragTarget(
+                                  builder: (context, List<String> candidateData, rejectedData) {
+                                    return ShopContainer(context, shops[index]);
+                                  },
+                                  onWillAccept: (data) => true,
+                                  onAccept: (data) async {
+                                    // Data is the id of the article dropped
+                                    Article articleDropped =
+                                    articles.firstWhere((Article article) {
+                                      return article.id.toString() == data;
                                     });
-                                    print(articles);
-                                  });
-                                }
-                              ),
-                            );
-                          }
+                                    shops[index].articles.add(articleDropped);
+                                    await _processPutShop(shops[index]);
+                                    setState(() {
+                                      articles.removeWhere((Article article) {
+                                        return article.id == articleDropped.id;
+                                      });
+                                      print(articles);
+                                    });
+                                  }
+                                ),
+                              );
+                            }
+                          ),
+                        ),
                       );
                     } else {
                       return SizedBox(
