@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:calicourse_front/helpers/ApiConnectionException.dart';
 import 'package:calicourse_front/models/Article.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -16,6 +17,8 @@ class HttpHelper {
       headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else {
       throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
     }
@@ -30,6 +33,8 @@ class HttpHelper {
         headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else {
       throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
     }
@@ -48,7 +53,9 @@ class HttpHelper {
       headers: {"Content-Type": "application/json"},
       body: convert.jsonEncode(jsonShop)
     );
-    if (response.statusCode != HttpStatus.ok) {
+    if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else if (response.statusCode != HttpStatus.ok) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
@@ -59,7 +66,9 @@ class HttpHelper {
       headers: {"Content-Type" : "application/json"},
       body:    convert.jsonEncode(jsonArticle)
     );
-    if (response.statusCode != HttpStatus.created) {
+    if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else if (response.statusCode != HttpStatus.created) {
       throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
@@ -72,6 +81,8 @@ class HttpHelper {
       headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else {
       throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
     }
@@ -90,7 +101,9 @@ class HttpHelper {
       headers: {"Content-Type" : "application/json"},
       body:    convert.jsonEncode(jsonArticle)
     );
-    if (response.statusCode != HttpStatus.created) {
+    if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else if (response.statusCode != HttpStatus.created) {
       throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
@@ -102,7 +115,9 @@ class HttpHelper {
       headers: {"Content-Type" : "application/json"},
       body:    convert.jsonEncode(jsonArticle)
     );
-    if (response.statusCode != HttpStatus.ok) {
+    if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else if (response.statusCode != HttpStatus.ok) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
@@ -112,7 +127,9 @@ class HttpHelper {
     http.Response response = await http.delete(apiBaseUrl + apiGetParamArticles + '/' + article.id.toString(),
       headers: {"Content-Type" : "application/json"}
     );
-    if (response.statusCode != HttpStatus.noContent) {
+    if (response.statusCode == HttpStatus.unauthorized) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else if (response.statusCode != HttpStatus.noContent) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
