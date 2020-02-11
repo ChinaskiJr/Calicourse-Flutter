@@ -7,18 +7,12 @@ import 'package:calicourse_front/models/Shop.dart';
 
 class HttpHelper {
   static const apiBaseUrl               = "http://192.168.1.35:8080/calicourse/api";
-  static const apiParamGetAllShops      = "/shops";
-  static const apiParamGetAShop         = "/shops/";
-  static const apiParamPutShop          = "/shops";
-  static const apiParamPostShop         = "/shops";
-  static const apiParamGetAllArticles   = "/articles";
-  static const apiParamPostArticle      = "/articles";
-  static const apiParamPutArticle       = "/articles";
-  static const apiParamDeleteArticle    = "/articles";
+  static const apiGetParamShops         = "/shops";
+  static const apiGetParamArticles      = "/articles";
 
   static Future<Shop> getShop(String shopId) async {
     dynamic jsonResponse;
-    http.Response response = await http.get(apiBaseUrl + apiParamGetAShop + shopId,
+    http.Response response = await http.get(apiBaseUrl + apiGetParamShops + '/' + shopId,
       headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
@@ -32,7 +26,7 @@ class HttpHelper {
   /// Throws [HttpException] if [response.statusCode] isn't 200
   static Future<List<Shop>> getShops() async {
     dynamic jsonResponse;
-    http.Response response = await http.get(apiBaseUrl + apiParamGetAllShops,
+    http.Response response = await http.get(apiBaseUrl + apiGetParamShops,
         headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
@@ -50,7 +44,7 @@ class HttpHelper {
   /// Throws [HttpException] if [response.statusCode] isn't 20O
   static Future<void> putShop(Shop shop) async {
     Map<String, dynamic> jsonShop = shop.toJson();
-    http.Response response = await http.put(apiBaseUrl + apiParamPutShop + '/' + shop.id.toString(),
+    http.Response response = await http.put(apiBaseUrl + apiGetParamShops + '/' + shop.id.toString(),
       headers: {"Content-Type": "application/json"},
       body: convert.jsonEncode(jsonShop)
     );
@@ -61,7 +55,7 @@ class HttpHelper {
 
   static Future<void> postShop(Shop shop) async {
     Map<String, dynamic> jsonArticle = shop.toJson();
-    http.Response response = await http.post(apiBaseUrl + apiParamPostShop,
+    http.Response response = await http.post(apiBaseUrl + apiGetParamShops,
       headers: {"Content-Type" : "application/json"},
       body:    convert.jsonEncode(jsonArticle)
     );
@@ -74,7 +68,7 @@ class HttpHelper {
   /// Throws [HttpException] if [response.statusCode] isn't 20O
   static Future<List<Article>> getArticles() async {
     dynamic jsonResponse;
-    http.Response response = await http.get(apiBaseUrl + apiParamGetAllArticles,
+    http.Response response = await http.get(apiBaseUrl + apiGetParamArticles,
       headers: {"Accept": "application/json"});
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
@@ -92,7 +86,7 @@ class HttpHelper {
   /// Throws [HttpException] if [response.statusCode] isn't 201
   static Future<void> postArticle(Article article) async {
     Map<String, dynamic> jsonArticle = article.toJson();
-    http.Response response = await http.post(apiBaseUrl + apiParamPostArticle,
+    http.Response response = await http.post(apiBaseUrl + apiGetParamArticles,
       headers: {"Content-Type" : "application/json"},
       body:    convert.jsonEncode(jsonArticle)
     );
@@ -104,7 +98,7 @@ class HttpHelper {
   /// Throws [HttpException] if [response.statusCode] isn't 200
   static Future<void> putArticle(Article article) async {
     Map<String, dynamic> jsonArticle = article.toJson();
-    http.Response response = await http.put(apiBaseUrl + apiParamPutArticle + '/' + article.id.toString(),
+    http.Response response = await http.put(apiBaseUrl + apiGetParamArticles + '/' + article.id.toString(),
       headers: {"Content-Type" : "application/json"},
       body:    convert.jsonEncode(jsonArticle)
     );
@@ -115,7 +109,7 @@ class HttpHelper {
   /// Performs the DELETE article request to the API
   /// Throws [HttpException] if [response.statusCode] isn't 204
   static Future<void> deleteArticle(Article article) async {
-    http.Response response = await http.delete(apiBaseUrl + apiParamDeleteArticle + '/' + article.id.toString(),
+    http.Response response = await http.delete(apiBaseUrl + apiGetParamArticles + '/' + article.id.toString(),
       headers: {"Content-Type" : "application/json"}
     );
     if (response.statusCode != HttpStatus.noContent) {
