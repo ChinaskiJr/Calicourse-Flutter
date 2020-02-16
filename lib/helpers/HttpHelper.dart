@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:calicourse_front/helpers/ApiConnectionException.dart';
 import 'package:calicourse_front/models/Article.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:calicourse_front/models/Shop.dart';
@@ -14,10 +15,13 @@ class HttpHelper {
   static Future<Shop> getShop(String shopId) async {
     dynamic jsonResponse;
     http.Response response = await http.get(apiBaseUrl + apiGetParamShops + '/' + shopId,
-      headers: {"Accept": "application/json"});
+      headers: {
+        "Accept": "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+    });
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
-    } else if (response.statusCode == HttpStatus.unauthorized) {
+    } else if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else {
       throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
@@ -30,10 +34,13 @@ class HttpHelper {
   static Future<List<Shop>> getShops() async {
     dynamic jsonResponse;
     http.Response response = await http.get(apiBaseUrl + apiGetParamShops,
-        headers: {"Accept": "application/json"});
+        headers: {
+          "Accept": "application/json",
+          "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+        });
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
-    } else if (response.statusCode == HttpStatus.unauthorized) {
+    } else if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else {
       throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
@@ -50,10 +57,13 @@ class HttpHelper {
   static Future<void> putShop(Shop shop) async {
     Map<String, dynamic> jsonShop = shop.toJson();
     http.Response response = await http.put(apiBaseUrl + apiGetParamShops + '/' + shop.id.toString(),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+      },
       body: convert.jsonEncode(jsonShop)
     );
-    if (response.statusCode == HttpStatus.unauthorized) {
+    if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.ok) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
@@ -63,10 +73,13 @@ class HttpHelper {
   static Future<void> postShop(Shop shop) async {
     Map<String, dynamic> jsonArticle = shop.toJson();
     http.Response response = await http.post(apiBaseUrl + apiGetParamShops,
-      headers: {"Content-Type" : "application/json"},
+      headers: {
+        "Content-Type" : "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+      },
       body:    convert.jsonEncode(jsonArticle)
     );
-    if (response.statusCode == HttpStatus.unauthorized) {
+    if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.created) {
       throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})");
@@ -78,10 +91,13 @@ class HttpHelper {
   static Future<List<Article>> getArticles() async {
     dynamic jsonResponse;
     http.Response response = await http.get(apiBaseUrl + apiGetParamArticles,
-      headers: {"Accept": "application/json"});
+      headers: {
+        "Accept": "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+      });
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
-    } else if (response.statusCode == HttpStatus.unauthorized) {
+    } else if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else {
       throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
@@ -98,13 +114,16 @@ class HttpHelper {
   static Future<void> postArticle(Article article) async {
     Map<String, dynamic> jsonArticle = article.toJson();
     http.Response response = await http.post(apiBaseUrl + apiGetParamArticles,
-      headers: {"Content-Type" : "application/json"},
+      headers: {
+        "Content-Type" : "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+      },
       body:    convert.jsonEncode(jsonArticle)
     );
-    if (response.statusCode == HttpStatus.unauthorized) {
+    if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.created) {
-      throw HttpException("Impossible de creéer cet article (code HTTP retourné : ${response.statusCode})");
+      throw HttpException("Impossible de créer cet article (code HTTP retourné : ${response.statusCode})");
     }
   }
   /// Performs the PUT new article request to the API
@@ -112,10 +131,13 @@ class HttpHelper {
   static Future<void> putArticle(Article article) async {
     Map<String, dynamic> jsonArticle = article.toJson();
     http.Response response = await http.put(apiBaseUrl + apiGetParamArticles + '/' + article.id.toString(),
-      headers: {"Content-Type" : "application/json"},
+      headers: {
+        "Content-Type" : "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+      },
       body:    convert.jsonEncode(jsonArticle)
     );
-    if (response.statusCode == HttpStatus.unauthorized) {
+    if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.ok) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
@@ -125,12 +147,22 @@ class HttpHelper {
   /// Throws [HttpException] if [response.statusCode] isn't 204
   static Future<void> deleteArticle(Article article) async {
     http.Response response = await http.delete(apiBaseUrl + apiGetParamArticles + '/' + article.id.toString(),
-      headers: {"Content-Type" : "application/json"}
+      headers: {
+        "Content-Type" : "application/json",
+        "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+      }
     );
-    if (response.statusCode == HttpStatus.unauthorized) {
+    if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.noContent) {
       throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
     }
+  }
+
+  static Future<String> loadApiKey() async {
+    final storage = FlutterSecureStorage();
+
+    String apiKey = await storage.read(key: 'calicourse_api_key');
+    return apiKey;
   }
 }
