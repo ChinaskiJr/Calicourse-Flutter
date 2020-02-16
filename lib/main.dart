@@ -4,10 +4,15 @@ import 'package:calicourse_front/widgets/pages/HomePage.dart';
 import 'package:calicourse_front/widgets/pages/ParamPage.dart';
 import 'package:calicourse_front/widgets/pages/ShopPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'widgets/pages/AddShopPage.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
