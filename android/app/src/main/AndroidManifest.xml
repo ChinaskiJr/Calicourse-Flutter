@@ -9,7 +9,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="calicourse_front"
+        android:label="Calicourse"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
