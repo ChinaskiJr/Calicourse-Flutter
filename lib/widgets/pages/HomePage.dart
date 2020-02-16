@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:calicourse_front/helpers/ApiConnectionException.dart';
 import 'package:calicourse_front/helpers/HttpHelper.dart';
 import 'package:calicourse_front/models/Article.dart';
 import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/ArticleContainer.dart';
+import 'package:calicourse_front/widgets/custom_widgets/CustomAlertDialog.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:calicourse_front/widgets/custom_widgets/ShopContainer.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,11 +28,19 @@ class _HomePageState extends State<HomePage> {
   List<Shop>      shops = [];
   List<Article>   articles = [];
 
+  bool connectionFailed = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => Navigator.pushNamed(context, '/param'),
+          )
+        ],
       ),
       body: Center(
         child: Column(
@@ -58,7 +68,6 @@ class _HomePageState extends State<HomePage> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: ListView.builder(
-
                             shrinkWrap: true,
                             itemCount: shops.length,
                             scrollDirection: Axis.horizontal,
@@ -181,6 +190,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadShops() async {
     try {
       this.shops = await HttpHelper.getShops();
+    } on ApiConnectionException catch(exception) {
+      if (!connectionFailed) {
+        connectionFailed = true;
+        CustomAlertDialog.showError(exception.message, context);
+      }
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
       FatalAlertDialog.showFatalError(exception.message, context);
@@ -194,6 +208,11 @@ class _HomePageState extends State<HomePage> {
       this.articles = allArticles.where((Article article) {
         return article.shop == null;
       }).toList();
+    } on ApiConnectionException catch(exception) {
+      if (!connectionFailed) {
+        connectionFailed = true;
+        CustomAlertDialog.showError(exception.message, context);
+      }
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
       FatalAlertDialog.showFatalError(exception.message, context);
