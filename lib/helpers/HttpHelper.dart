@@ -8,7 +8,10 @@ import 'dart:convert' as convert;
 import 'package:calicourse_front/models/Shop.dart';
 
 class HttpHelper {
-  static const apiBaseUrl               = "http://192.168.1.35:8080/calicourse/api";
+  // Dev
+  // static const apiBaseUrl = "http://192.168.1.35:8080/calicourse/api";&
+  // Prod
+  static const apiBaseUrl               = "https://calicourse.robin-colombier.com/api";
   static const apiGetParamShops         = "/shops";
   static const apiGetParamArticles      = "/articles";
 
