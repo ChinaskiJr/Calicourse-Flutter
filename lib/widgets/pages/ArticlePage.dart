@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:calicourse_front/helpers/HttpHelper.dart';
 import 'package:calicourse_front/models/Article.dart';
+import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,8 +30,14 @@ class ArticlePageState extends State<ArticlePage>{
 
   @override
   Widget build(BuildContext context) {
-    Article article = ModalRoute.of(context).settings.arguments;
-
+    Article article;
+    Shop shop;
+    if (ModalRoute.of(context).settings.arguments.runtimeType == Article) {
+      article = ModalRoute.of(context).settings.arguments;
+    }
+    if (ModalRoute.of(context).settings.arguments.runtimeType == Shop) {
+      shop = ModalRoute.of(context).settings.arguments;
+    }
 
     _titleFieldConstructor = TextEditingController(
       text: (article != null) ? article.title : ''
@@ -127,7 +134,13 @@ class ArticlePageState extends State<ArticlePage>{
                                         _titleFieldConstructor.text,
                                         _commentFieldConstructor.text
                                       );
-                                      await _processAddArticle(newArticle);
+                                      Article articledCreated = await _processAddArticle(newArticle);
+                                      // Do we have a shop to link ?
+                                      if (shop != null) {
+                                        shop.articles.add(articledCreated);
+                                        await _processPutShop(shop);
+                                      }
+
                                     } else {
                                       // Update Article
                                       article.title = _titleFieldConstructor.text;
@@ -155,9 +168,10 @@ class ArticlePageState extends State<ArticlePage>{
   }
   /// Between the Http call and the Navigator.pop.
   /// Purpose of this function is to properly manage the [HttpException]
-  Future<void> _processAddArticle(Article article) async {
+  Future<dynamic> _processAddArticle(Article article) async {
     try {
-      await HttpHelper.postArticle(article);
+      Article articleCreated = await HttpHelper.postArticle(article);
+      return articleCreated;
     } on HttpException catch (exception, stacktrace) {
       print(stacktrace);
       FatalAlertDialog.showFatalError(exception.message, context);
@@ -180,6 +194,17 @@ class ArticlePageState extends State<ArticlePage>{
       await HttpHelper.deleteArticle(article);
     } on HttpException catch (exception, stacktrace) {
       print(stacktrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
+    }
+  }
+  /// Between the Http call and the refresh of the [FutureBuilder].
+  /// Purpose of this function is to properly manage the [HttpException]
+  Future<void> _processPutShop(Shop shop) async {
+    try {
+      await HttpHelper.putShop(shop);
+    } on HttpException catch(exception, stackTrace) {
+      print(stackTrace);
+      print(exception.message);
       FatalAlertDialog.showFatalError(exception.message, context);
     }
   }

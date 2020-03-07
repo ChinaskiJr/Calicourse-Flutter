@@ -235,7 +235,13 @@ class _ShopPageState extends State<ShopPage> {
             ),
           ],
         ),
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add_shopping_cart
+        ),
+        onPressed: () => Navigator.pushNamed(context, '/addArticle', arguments: shop),
+      ),
     );
   }
   /// Load the shop from the API and then set it in the State.
