@@ -9,7 +9,7 @@ import 'package:calicourse_front/models/Shop.dart';
 
 class HttpHelper {
   // Dev
-  // static const apiBaseUrl = "http://192.168.1.35:8080/calicourse/api";&
+  // static const apiBaseUrl = "http://calicourse.192.168.1.35:8080/api/";
   // Prod
   static const apiBaseUrl               = "https://calicourse.robin-colombier.com/api";
   static const apiGetParamShops         = "/shops";
@@ -69,7 +69,7 @@ class HttpHelper {
     if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.ok) {
-      throw HttpException("Impossible de modifier cet article (code HTTP retourné : ${response.statusCode})");
+      throw HttpException("Impossible de modifier ce magasin (code HTTP retourné : ${response.statusCode})");
     }
   }
 
@@ -114,7 +114,7 @@ class HttpHelper {
   }
   /// Performs the POST new article request to the API
   /// Throws [HttpException] if [response.statusCode] isn't 201
-  static Future<void> postArticle(Article article) async {
+  static Future<dynamic> postArticle(Article article) async {
     Map<String, dynamic> jsonArticle = article.toJson();
     http.Response response = await http.post(apiBaseUrl + apiGetParamArticles,
       headers: {
@@ -127,6 +127,11 @@ class HttpHelper {
       throw ApiConnectionException("Veuiller entrer une clé API valide");
     } else if (response.statusCode != HttpStatus.created) {
       throw HttpException("Impossible de créer cet article (code HTTP retourné : ${response.statusCode})");
+    } else {
+      dynamic jsonResponse;
+      jsonResponse = convert.jsonDecode(response.body);
+      Article article = Article.fromJson(jsonResponse);
+      return article;
     }
   }
   /// Performs the PUT new article request to the API
