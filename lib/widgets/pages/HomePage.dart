@@ -23,8 +23,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  static const String header = "La fierté d'avoir le contrôle sur les données de sa liste de courses";
-
   List<Shop>      shops = [];
   List<Article>   articles = [];
 
@@ -45,18 +43,6 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width * 0.75,
-              child: Text(
-                header,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: globalFontSize,
-                  color: mainColor,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
             Container(
               width: MediaQuery.of(context).size.width * 0.85,
               child: FutureBuilder<void>(
