@@ -18,6 +18,8 @@ class ShopPage extends StatefulWidget {
 class _ShopPageState extends State<ShopPage> {
 
   Shop shop = Shop.empty();
+  List<Article> articlesNotBought = [];
+  List<Article> articlesBought = [];
   List<bool> displayCommentPressed  = [];
   List<IconData> trailingIcons      = [];
 
@@ -50,81 +52,97 @@ class _ShopPageState extends State<ShopPage> {
                       ),
                     ),
                   ),
-                  ListView.builder(
+                  GridView.builder(
                     shrinkWrap: true,
-                    itemCount: (shop.articles == null) ? 0 : shop.articles.length,
+                    itemCount: (shop.articles == null) ? 0 : this.articlesNotBought.length,
                     physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
                     itemBuilder: (BuildContext context, int index) {
                       displayCommentPressed.add(false);
                       trailingIcons.add(Icons.keyboard_arrow_down);
                       // ARTICLES TO BUY
-                      if (!shop.articles[index].bought) {
-                        return Dismissible(
-                          key: ValueKey('article_' + shop.articles[index].id.toString()),
-                          background: Card(
-                            color: Color.fromARGB(255, 0, 156, 122),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 35.0),
-                              child: Icon(
-                                Icons.check,
-                                color: Colors.white,
-                              ),
-                            )
-                          ),
-                          onDismissed: (DismissDirection direction) async {
-                            setState(() {
-                              shop.articles[index].bought = true;
-                            });
-                            await _processPutArticle(shop.articles[index]);
+                      return Dismissible(
+                        key: ValueKey('article_' + articlesNotBought[index].id.toString()),
+                        background: Card(
+                          color: Color.fromARGB(255, 0, 156, 122),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 35.0),
+                            child: Icon(
+                              Icons.check,
+                              color: Colors.white,
+                            ),
+                          )
+                        ),
+                        onDismissed: (DismissDirection direction) async {
+                          await _processPutArticle(articlesNotBought[index]);
+                          setState(() {
+                            articlesNotBought[index].bought = true;
+                            articlesBought.add(articlesNotBought[index]);
+                            articlesNotBought.removeAt(index);
+                          });
+                        },
+                        child: GestureDetector(
+                          onTap: () {
+                            if (articlesNotBought[index].comment.isNotEmpty) {
+                              return showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SimpleDialog(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.all(12.0),
+                                        child: Text(
+                                          articlesNotBought[index].comment,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                }
+                              );
+                            } else {
+                              return null;
+                            }
+                          },
+                          onLongPress: () async {
+                            bool refresh = await _updateArticleWidget(articlesNotBought[index]);
+                            if (refresh != null && refresh) {
+                              setState(() {
+                                _loadShop(shopId);
+                              });
+                            }
                           },
                           child: Card(
                             child: Padding(
                               padding: EdgeInsets.all(5.0),
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  ListTile(
-                                    title: Text(
-                                      shop.articles[index].title
+                                  Center(
+                                    child: Text(
+                                      articlesNotBought[index].title,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: articleTitleFontSize
+                                      ),
                                     ),
-                                    onLongPress: () async {
-                                      bool refresh = await _updateArticleWidget(shop.articles[index]);
-                                      if (refresh != null && refresh) {
-                                        setState(() {
-                                          _loadShop(shopId);
-                                        });
-                                      }
-                                    },
-                                    trailing: (shop.articles[index].comment.isNotEmpty)
-                                      ? IconButton(
-                                      icon: Icon(trailingIcons[index]),
-                                      onPressed: () {
-                                        setState(() {
-                                          if (displayCommentPressed[index] == true) {
-                                            displayCommentPressed[index] = false;
-                                            trailingIcons[index] = Icons.keyboard_arrow_down;
-                                          } else {
-                                            displayCommentPressed[index] = true;
-                                            trailingIcons[index] = Icons.keyboard_arrow_up;
-                                          }
-                                        });
-                                      })
-                                      : null,
                                   ),
-                                  (displayCommentPressed[index])
-                                    ? Padding(
-                                    padding: EdgeInsets.only(bottom: 10.0),
-                                    child: Text(shop.articles[index].comment),
-                                  )
+                                  (articlesNotBought[index].comment.isNotEmpty)
+                                    ? Center(
+                                        child: Icon(
+                                          Icons.info_outline,
+                                          color: mainColor,
+                                        ),
+                                      )
                                     : Container()
                                 ],
                               ),
                             )
-                          )
-                        );
-                      } else {
-                        return Container();
-                      }
-                    })
+                          ),
+                        )
+                      );
+                    },
+                  )
                 ],
               )
             ),
@@ -143,92 +161,173 @@ class _ShopPageState extends State<ShopPage> {
                     ),
                     padding: EdgeInsets.only(bottom: 7.5),
                   ),
-                  ListView.builder(
+                  GridView.builder(
                     shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: (shop.articles == null) ? 0 : shop.articles.length,
+                    itemCount: (shop.articles == null) ? 0 : this.articlesBought.length,
                     itemBuilder: (BuildContext context, int index) {
                       displayCommentPressed.add(false);
                       trailingIcons.add(Icons.keyboard_arrow_down);
                       // ARTICLES TO BUY
-                      if (shop.articles[index].bought) {
-                        return Dismissible(
-                          key: ValueKey('article_' + shop.articles[index].id.toString()),
-                          background: Card(
-                            color: secondaryColor,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 35.0),
-                              child:  Icon(
-                                Icons.add_shopping_cart,
-                                color: Colors.white,
-                              ),
-                            )
-                          ),
-                          onDismissed: (DismissDirection direction) async {
-                            setState(() {
-                              shop.articles[index].bought = false;
-                            });
-                            await _processPutArticle(shop.articles[index]);
+//                      return Dismissible(
+//                        key: ValueKey('article_' + articlesBought[index].id.toString()),
+//                        background: Card(
+//                          color: secondaryColor,
+//                          child: Padding(
+//                            padding: EdgeInsets.symmetric(horizontal: 35.0),
+//                            child:  Icon(
+//                              Icons.add_shopping_cart,
+//                              color: Colors.white,
+//                            ),
+//                          )
+//                        ),
+//                        onDismissed: (DismissDirection direction) async {
+//                          await _processPutArticle(articlesBought[index]);
+//                          setState(() {
+//                            articlesBought[index].bought = true;
+//                            articlesNotBought.add(articlesBought[index]);
+//                            articlesBought.removeAt(index);
+//                          });
+//                        },
+//                        child: Card(
+//                          color: Colors.blueGrey,
+//                          child: Padding(
+//                            padding: EdgeInsets.all(5.0),
+//                            child: Column(
+//                              children: <Widget>[
+//                                ListTile(
+//                                  title: Text(
+//                                    articlesBought[index].title,
+//                                    style: TextStyle(
+//                                      color: Colors.white
+//                                    ),
+//                                  ),
+//                                  onLongPress: () async {
+//                                    bool refresh = await _updateArticleWidget(articlesBought[index]);
+//                                    if (refresh != null && refresh) {
+//                                      setState(() {
+//                                        _loadShop(shopId);
+//                                      });
+//                                    }
+//                                  },
+//                                  trailing: (articlesBought[index].comment.isNotEmpty)
+//                                    ? IconButton(
+//                                    icon: Icon(
+//                                      trailingIcons[index],
+//                                      color: Colors.white,
+//                                    ),
+//                                    onPressed: () {
+//                                      setState(() {
+//                                        if (displayCommentPressed[index] == true) {
+//                                          displayCommentPressed[index] = false;
+//                                          trailingIcons[index] = Icons.keyboard_arrow_down;
+//                                        } else {
+//                                          displayCommentPressed[index] = true;
+//                                          trailingIcons[index] = Icons.keyboard_arrow_up;
+//                                        }
+//                                      });
+//                                    })
+//                                    : null,
+//                                ),
+//                                (displayCommentPressed[index])
+//                                  ? Padding(
+//                                  padding: EdgeInsets.only(bottom: 10.0),
+//                                  child: Text(
+//                                    articlesBought[index].comment,
+//                                    style: TextStyle(
+//                                      color: Colors.white
+//                                    ),
+//                                  ),
+//                                )
+//                                  : Container()
+//                              ],
+//                            ),
+//                          )
+//                        )
+//                      );
+                      return Dismissible(
+                        key: ValueKey('article_' + articlesBought[index].id.toString()),
+                        background: Card(
+                          color: secondaryColor,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 35.0),
+                            child:  Icon(
+                              Icons.add_shopping_cart,
+                              color: Colors.white,
+                            ),
+                          )
+                        ),
+                        onDismissed: (DismissDirection direction) async {
+                          await _processPutArticle(articlesBought[index]);
+                          setState(() {
+                            articlesBought[index].bought = true;
+                            articlesNotBought.add(articlesBought[index]);
+                            articlesBought.removeAt(index);
+                          });
+                        },
+                        child: GestureDetector(
+                          onTap: () {
+                            if (articlesBought[index].comment.isNotEmpty) {
+                              return showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SimpleDialog(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.all(12.0),
+                                        child: Text(
+                                          articlesBought[index].comment,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                }
+                              );
+                            } else {
+                              return null;
+                            }
+                          },
+                          onLongPress: () async {
+                            bool refresh = await _updateArticleWidget(articlesBought[index]);
+                            if (refresh != null && refresh) {
+                              setState(() {
+                                _loadShop(shopId);
+                              });
+                            }
                           },
                           child: Card(
                             color: Colors.blueGrey,
                             child: Padding(
                               padding: EdgeInsets.all(5.0),
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  ListTile(
-                                    title: Text(
-                                      shop.articles[index].title,
+                                  Center(
+                                  child: Text(
+                                      articlesBought[index].title,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
+                                        fontSize: articleTitleFontSize,
                                         color: Colors.white
                                       ),
                                     ),
-                                    onLongPress: () async {
-                                      bool refresh = await _updateArticleWidget(shop.articles[index]);
-                                      if (refresh != null && refresh) {
-                                        setState(() {
-                                          _loadShop(shopId);
-                                        });
-                                      }
-                                    },
-                                    trailing: (shop.articles[index].comment.isNotEmpty)
-                                      ? IconButton(
-                                      icon: Icon(
-                                        trailingIcons[index],
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          if (displayCommentPressed[index] == true) {
-                                            displayCommentPressed[index] = false;
-                                            trailingIcons[index] = Icons.keyboard_arrow_down;
-                                          } else {
-                                            displayCommentPressed[index] = true;
-                                            trailingIcons[index] = Icons.keyboard_arrow_up;
-                                          }
-                                        });
-                                      })
-                                      : null,
                                   ),
-                                  (displayCommentPressed[index])
-                                    ? Padding(
-                                    padding: EdgeInsets.only(bottom: 10.0),
-                                    child: Text(
-                                      shop.articles[index].comment,
-                                      style: TextStyle(
-                                        color: Colors.white
-                                      ),
+                                  (articlesBought[index].comment.isNotEmpty)
+                                    ? Center(
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      color: Colors.white,
                                     ),
                                   )
                                     : Container()
                                 ],
                               ),
                             )
-                          )
-                        );
-                      } else {
-                        return Container();
-                      }
+                          ),
+                        )
+                      );
                     })
                 ],
               )
@@ -244,13 +343,25 @@ class _ShopPageState extends State<ShopPage> {
       ),
     );
   }
+  Future<void> sortArticles(List<Article> article) async {
+    for (Article article in article) {
+      if (article.bought) {
+        this.articlesBought.add(article);
+      } else {
+        this.articlesNotBought.add(article);
+      }
+    }
+  }
   /// Load the shop from the API and then set it in the State.
   /// Catch [HttpException] and display Fatal Error if needed.
   Future<void> _loadShop(String shopId) async {
     try {
       Shop shop = await HttpHelper.getShop(shopId);
+      await sortArticles(shop.articles);
       setState(() {
         this.shop = shop;
+        this.articlesNotBought = this.articlesNotBought;
+        this.articlesBought = this.articlesBought;
       });
     } on HttpException catch(exception, stackTrace) {
       print(stackTrace);
