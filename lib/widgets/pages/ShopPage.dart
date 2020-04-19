@@ -74,9 +74,10 @@ class _ShopPageState extends State<ShopPage> {
                           )
                         ),
                         onDismissed: (DismissDirection direction) async {
+                          articlesNotBought[index].bought = true;
+                          print(articlesNotBought[index]);
                           await _processPutArticle(articlesNotBought[index]);
                           setState(() {
-                            articlesNotBought[index].bought = true;
                             articlesBought.add(articlesNotBought[index]);
                             articlesNotBought.removeAt(index);
                           });
@@ -170,82 +171,6 @@ class _ShopPageState extends State<ShopPage> {
                       displayCommentPressed.add(false);
                       trailingIcons.add(Icons.keyboard_arrow_down);
                       // ARTICLES TO BUY
-//                      return Dismissible(
-//                        key: ValueKey('article_' + articlesBought[index].id.toString()),
-//                        background: Card(
-//                          color: secondaryColor,
-//                          child: Padding(
-//                            padding: EdgeInsets.symmetric(horizontal: 35.0),
-//                            child:  Icon(
-//                              Icons.add_shopping_cart,
-//                              color: Colors.white,
-//                            ),
-//                          )
-//                        ),
-//                        onDismissed: (DismissDirection direction) async {
-//                          await _processPutArticle(articlesBought[index]);
-//                          setState(() {
-//                            articlesBought[index].bought = true;
-//                            articlesNotBought.add(articlesBought[index]);
-//                            articlesBought.removeAt(index);
-//                          });
-//                        },
-//                        child: Card(
-//                          color: Colors.blueGrey,
-//                          child: Padding(
-//                            padding: EdgeInsets.all(5.0),
-//                            child: Column(
-//                              children: <Widget>[
-//                                ListTile(
-//                                  title: Text(
-//                                    articlesBought[index].title,
-//                                    style: TextStyle(
-//                                      color: Colors.white
-//                                    ),
-//                                  ),
-//                                  onLongPress: () async {
-//                                    bool refresh = await _updateArticleWidget(articlesBought[index]);
-//                                    if (refresh != null && refresh) {
-//                                      setState(() {
-//                                        _loadShop(shopId);
-//                                      });
-//                                    }
-//                                  },
-//                                  trailing: (articlesBought[index].comment.isNotEmpty)
-//                                    ? IconButton(
-//                                    icon: Icon(
-//                                      trailingIcons[index],
-//                                      color: Colors.white,
-//                                    ),
-//                                    onPressed: () {
-//                                      setState(() {
-//                                        if (displayCommentPressed[index] == true) {
-//                                          displayCommentPressed[index] = false;
-//                                          trailingIcons[index] = Icons.keyboard_arrow_down;
-//                                        } else {
-//                                          displayCommentPressed[index] = true;
-//                                          trailingIcons[index] = Icons.keyboard_arrow_up;
-//                                        }
-//                                      });
-//                                    })
-//                                    : null,
-//                                ),
-//                                (displayCommentPressed[index])
-//                                  ? Padding(
-//                                  padding: EdgeInsets.only(bottom: 10.0),
-//                                  child: Text(
-//                                    articlesBought[index].comment,
-//                                    style: TextStyle(
-//                                      color: Colors.white
-//                                    ),
-//                                  ),
-//                                )
-//                                  : Container()
-//                              ],
-//                            ),
-//                          )
-//                        )
-//                      );
                       return Dismissible(
                         key: ValueKey('article_' + articlesBought[index].id.toString()),
                         background: Card(
@@ -259,9 +184,10 @@ class _ShopPageState extends State<ShopPage> {
                           )
                         ),
                         onDismissed: (DismissDirection direction) async {
+                          articlesBought[index].bought = false;
+                          print(articlesBought[index]);
                           await _processPutArticle(articlesBought[index]);
                           setState(() {
-                            articlesBought[index].bought = true;
                             articlesNotBought.add(articlesBought[index]);
                             articlesBought.removeAt(index);
                           });
