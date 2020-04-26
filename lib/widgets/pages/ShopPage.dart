@@ -265,18 +265,23 @@ class _ShopPageState extends State<ShopPage> {
         child: Icon(
           Icons.add_shopping_cart
         ),
-        onPressed: () => Navigator.pushNamed(context, '/addArticle', arguments: shop),
+        onPressed: () async {
+          await Navigator.pushNamed(context, '/addArticle', arguments: shop);
+          await _loadShop(shopId);
+        },
       ),
     );
   }
   Future<void> sortArticles(List<Article> article) async {
-    for (Article article in article) {
-      if (article.bought) {
-        this.articlesBought.add(article);
-      } else {
-        this.articlesNotBought.add(article);
+      this.articlesNotBought = [];
+      this.articlesBought = [];
+      for (Article article in article) {
+        if (article.bought) {
+          this.articlesBought.add(article);
+        } else {
+          this.articlesNotBought.add(article);
+        }
       }
-    }
   }
   /// Load the shop from the API and then set it in the State.
   /// Catch [HttpException] and display Fatal Error if needed.

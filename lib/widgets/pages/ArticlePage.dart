@@ -140,7 +140,6 @@ class ArticlePageState extends State<ArticlePage>{
                                         shop.articles.add(articledCreated);
                                         await _processPutShop(shop);
                                       }
-
                                     } else {
                                       // Update Article
                                       article.title = _titleFieldConstructor.text;
