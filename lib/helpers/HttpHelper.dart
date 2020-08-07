@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:calicourse_front/helpers/ApiConnectionException.dart';
 import 'package:calicourse_front/models/Article.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -14,6 +15,8 @@ class HttpHelper {
   static const apiBaseUrl               = "https://calicourse.robin-colombier.com/api";
   static const apiGetParamShops         = "/shops";
   static const apiGetParamArticles      = "/articles";
+  static const apiParamBought           = "bought";
+  static const apiParamShop             = "shop";
 
   static Future<Shop> getShop(String shopId) async {
     dynamic jsonResponse;
@@ -98,6 +101,29 @@ class HttpHelper {
         "Accept": "application/json",
         "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
       });
+    if (response.statusCode == HttpStatus.ok) {
+      jsonResponse = convert.jsonDecode(response.body);
+    } else if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else {
+      throw HttpException("Impossible de récupèrer les données (code HTTP retourné : ${response.statusCode})");
+    }
+    List<Article> articles = [];
+    for (Map map in jsonResponse) {
+      Article article = Article.fromJson(map);
+      articles.add(article);
+    }
+    return articles;
+  }
+  static Future<List<Article>> getArticlesByShopAndStatus(String shopId, bool isBought) async {
+    dynamic jsonResponse;
+    debugPrint(apiBaseUrl + apiGetParamArticles + "?" + apiParamBought + "=" + isBought.toString() + "&" + apiParamShop + "=" + shopId);
+    // /api/articles?bought=true&shop=1
+    http.Response response = await http.get(apiBaseUrl + apiGetParamArticles + "?" + apiParamBought + "=" + isBought.toString() + "&" + apiParamShop + "=" + shopId,
+        headers: {
+          "Accept": "application/json",
+          "X-AUTH-TOKEN": await HttpHelper.loadApiKey()
+        });
     if (response.statusCode == HttpStatus.ok) {
       jsonResponse = convert.jsonDecode(response.body);
     } else if (response.statusCode == HttpStatus.unauthorized || response.statusCode == HttpStatus.forbidden) {
