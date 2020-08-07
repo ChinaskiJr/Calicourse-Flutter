@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:calicourse_front/helpers/HttpHelper.dart';
@@ -22,6 +23,15 @@ class _ShopPageState extends State<ShopPage> {
   List<Article> articlesBought = [];
   List<bool> displayCommentPressed  = [];
   List<IconData> trailingIcons      = [];
+  Timer mytimer;
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (mytimer.isActive) {
+      mytimer.cancel();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +39,9 @@ class _ShopPageState extends State<ShopPage> {
 
     if (shop.id == null) {
       _loadShop(shopId);
+      this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
+        _updateArticles(shopId);
+      });
     }
     return Scaffold(
       appBar: AppBar(
@@ -287,10 +300,23 @@ class _ShopPageState extends State<ShopPage> {
   /// Catch [HttpException] and display Fatal Error if needed.
   Future<void> _loadShop(String shopId) async {
     try {
-      Shop shop = await HttpHelper.getShop(shopId);
-      await sortArticles(shop.articles);
+      this.shop = await HttpHelper.getShop(shopId);
+      this.articlesBought = await HttpHelper.getArticlesByShopAndStatus(shopId, true);
+      this.articlesNotBought = await HttpHelper.getArticlesByShopAndStatus(shopId, false);
       setState(() {
-        this.shop = shop;
+        this.articlesNotBought = this.articlesNotBought;
+        this.articlesBought = this.articlesBought;
+      });
+    } on HttpException catch(exception, stackTrace) {
+      print(stackTrace);
+      FatalAlertDialog.showFatalError(exception.message, context);
+    }
+  }
+  Future<void> _updateArticles(String shopId) async {
+    try {
+      this.articlesBought = await HttpHelper.getArticlesByShopAndStatus(shopId, true);
+      this.articlesNotBought = await HttpHelper.getArticlesByShopAndStatus(shopId, false);
+      setState(() {
         this.articlesNotBought = this.articlesNotBought;
         this.articlesBought = this.articlesBought;
       });
