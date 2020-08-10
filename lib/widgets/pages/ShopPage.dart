@@ -98,7 +98,12 @@ class _ShopPageState extends State<ShopPage> {
                       ),
                     ),
                   ),
-                  GridView.builder(
+                  (this.articlesNotBought.length == 0)
+                  ? Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text("Rien à afficher"),
+                  )
+                  : GridView.builder(
                     shrinkWrap: true,
                     itemCount: (shop.articles == null) ? 0 : this.articlesNotBought.length,
                     physics: const NeverScrollableScrollPhysics(),
@@ -208,7 +213,12 @@ class _ShopPageState extends State<ShopPage> {
                     ),
                     padding: EdgeInsets.only(bottom: 7.5),
                   ),
-                  GridView.builder(
+                  (this.articlesBought.length == 0)
+                      ? Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text("Rien à afficher"),
+                  )
+                      : GridView.builder(
                     shrinkWrap: true,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
                     physics: const NeverScrollableScrollPhysics(),
