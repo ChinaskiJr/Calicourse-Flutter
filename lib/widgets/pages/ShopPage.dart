@@ -386,8 +386,4 @@ class _ShopPageState extends State<ShopPage> {
       arguments: article
     );
   }
-
-  Future<void> _filter(String string) {
-
-  }
 }
