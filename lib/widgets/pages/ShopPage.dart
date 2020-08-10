@@ -21,7 +21,9 @@ class _ShopPageState extends State<ShopPage> {
 
   Shop shop = Shop.empty();
   List<Article> articlesNotBought = [];
+  List<Article> articlesNotBoughtBeforeFiltering = [];
   List<Article> articlesBought = [];
+  List<Article> articlesBoughtBeforeFiltering = [];
   List<bool> displayCommentPressed  = [];
   List<IconData> trailingIcons      = [];
   TextEditingController _filterTextController = TextEditingController();
@@ -74,10 +76,10 @@ class _ShopPageState extends State<ShopPage> {
                     mytimer.cancel();
                   }
                   if (str.isNotEmpty) {
-                    List<Article> articlesNotBoughtFiltered = this.articlesNotBought.where((Article article) {
+                    List<Article> articlesNotBoughtFiltered = this.articlesNotBoughtBeforeFiltering.where((Article article) {
                       return article.title.toLowerCase().contains(str.toLowerCase());
                     }).toList();
-                    List<Article> articlesBoughtFiltered = this.articlesBought.where((Article article) {
+                    List<Article> articlesBoughtFiltered = this.articlesBoughtBeforeFiltering.where((Article article) {
                       return article.title.toLowerCase().contains(str.toLowerCase());
                     }).toList();
                     setState(() {
@@ -353,6 +355,8 @@ class _ShopPageState extends State<ShopPage> {
       this.shop = await HttpHelper.getShop(shopId);
       this.articlesBought = await HttpHelper.getArticlesByShopAndStatus(shopId, true);
       this.articlesNotBought = await HttpHelper.getArticlesByShopAndStatus(shopId, false);
+      this.articlesBoughtBeforeFiltering = List.from(this.articlesBought);
+      this.articlesNotBoughtBeforeFiltering = List.from(this.articlesNotBought);
       setState(() {
         this.articlesNotBought = this.articlesNotBought;
         this.articlesBought = this.articlesBought;
