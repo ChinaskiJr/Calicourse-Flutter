@@ -64,12 +64,7 @@ class _ShopPageState extends State<ShopPage> {
                         icon: Icon(Icons.clear),
                         onPressed: () async {
                           _filterTextController.clear();
-                          if (!mytimer.isActive) {
-                            await _updateArticles(shopId);
-                            this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
-                              _updateArticles(shopId);
-                            });
-                          }
+                          await _restartTimerIfNeeded(shopId);
                         }
                     )
                 ),
@@ -90,12 +85,7 @@ class _ShopPageState extends State<ShopPage> {
                       this.articlesBought = articlesBoughtFiltered;
                     });
                   } else {
-                    if (!mytimer.isActive) {
-                      await _updateArticles(shopId);
-                      this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
-                        _updateArticles(shopId);
-                      });
-                    }
+                    await _restartTimerIfNeeded(shopId);
                   }
                 },
               ),
@@ -402,5 +392,14 @@ class _ShopPageState extends State<ShopPage> {
       '/updateArticle',
       arguments: article
     );
+  }
+
+  Future<void> _restartTimerIfNeeded(String shopId) async {
+    if (!mytimer.isActive) {
+      await _updateArticles(shopId);
+      this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
+        _updateArticles(shopId);
+      });
+    }
   }
 }
