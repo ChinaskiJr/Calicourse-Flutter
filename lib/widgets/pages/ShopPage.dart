@@ -8,6 +8,7 @@ import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ShopPage extends StatefulWidget {
   @override
@@ -23,11 +24,13 @@ class _ShopPageState extends State<ShopPage> {
   List<Article> articlesBought = [];
   List<bool> displayCommentPressed  = [];
   List<IconData> trailingIcons      = [];
+  TextEditingController _filterTextController = TextEditingController();
   Timer mytimer;
 
   @override
   void dispose() {
     super.dispose();
+    _filterTextController.dispose();
     if (mytimer.isActive) {
       mytimer.cancel();
     }
@@ -50,6 +53,36 @@ class _ShopPageState extends State<ShopPage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Filtrer...",
+              ),
+              controller: _filterTextController,
+              onChanged: (String str) async {
+                if (mytimer.isActive) {
+                  mytimer.cancel();
+                }
+                if (str.isNotEmpty) {
+                  List<Article> articlesNotBoughtFiltered = this.articlesNotBought.where((Article article) {
+                    return article.title.toLowerCase().contains(str.toLowerCase());
+                  }).toList();
+                  List<Article> articlesBoughtFiltered = this.articlesBought.where((Article article) {
+                    return article.title.toLowerCase().contains(str.toLowerCase());
+                  }).toList();
+                  setState(() {
+                    this.articlesNotBought = articlesNotBoughtFiltered;
+                    this.articlesBought = articlesBoughtFiltered;
+                  });
+                } else {
+                  if (!mytimer.isActive) {
+                    await _updateArticles(shopId);
+                    this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
+                      _updateArticles(shopId);
+                    });
+                  }
+                }
+              },
+            ),
             Container(
               padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.05),
               child: Column(
@@ -342,5 +375,9 @@ class _ShopPageState extends State<ShopPage> {
       '/updateArticle',
       arguments: article
     );
+  }
+
+  Future<void> _filter(String string) {
+
   }
 }
