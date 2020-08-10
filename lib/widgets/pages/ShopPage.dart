@@ -53,35 +53,52 @@ class _ShopPageState extends State<ShopPage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Filtrer...",
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 25.0
               ),
-              controller: _filterTextController,
-              onChanged: (String str) async {
-                if (mytimer.isActive) {
-                  mytimer.cancel();
-                }
-                if (str.isNotEmpty) {
-                  List<Article> articlesNotBoughtFiltered = this.articlesNotBought.where((Article article) {
-                    return article.title.toLowerCase().contains(str.toLowerCase());
-                  }).toList();
-                  List<Article> articlesBoughtFiltered = this.articlesBought.where((Article article) {
-                    return article.title.toLowerCase().contains(str.toLowerCase());
-                  }).toList();
-                  setState(() {
-                    this.articlesNotBought = articlesNotBoughtFiltered;
-                    this.articlesBought = articlesBoughtFiltered;
-                  });
-                } else {
-                  if (!mytimer.isActive) {
-                    await _updateArticles(shopId);
-                    this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
-                      _updateArticles(shopId);
-                    });
+              child: TextField(
+                decoration: InputDecoration(
+                    hintText: "Filtrer...",
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () async {
+                          _filterTextController.clear();
+                          if (!mytimer.isActive) {
+                            await _updateArticles(shopId);
+                            this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
+                              _updateArticles(shopId);
+                            });
+                          }
+                        }
+                    )
+                ),
+                controller: _filterTextController,
+                onChanged: (String str) async {
+                  if (mytimer.isActive) {
+                    mytimer.cancel();
                   }
-                }
-              },
+                  if (str.isNotEmpty) {
+                    List<Article> articlesNotBoughtFiltered = this.articlesNotBought.where((Article article) {
+                      return article.title.toLowerCase().contains(str.toLowerCase());
+                    }).toList();
+                    List<Article> articlesBoughtFiltered = this.articlesBought.where((Article article) {
+                      return article.title.toLowerCase().contains(str.toLowerCase());
+                    }).toList();
+                    setState(() {
+                      this.articlesNotBought = articlesNotBoughtFiltered;
+                      this.articlesBought = articlesBoughtFiltered;
+                    });
+                  } else {
+                    if (!mytimer.isActive) {
+                      await _updateArticles(shopId);
+                      this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
+                        _updateArticles(shopId);
+                      });
+                    }
+                  }
+                },
+              ),
             ),
             Container(
               padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.05),
