@@ -73,12 +73,24 @@ class ArticlePageState extends State<ArticlePage> {
                           children: <Widget>[
                             (article != null)
                             ? article.image == null
-                                ? RaisedButton.icon(
-                                    onPressed: () {
-                                      _takePicture(article);
-                                    },
-                                    icon: Icon(Icons.camera_enhance_rounded),
-                                    label: Text("Prendre une photo"))
+                                ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    RaisedButton.icon(
+                                        onPressed: () {
+                                          _takePicture(article);
+                                        },
+                                        icon: Icon(Icons.camera_enhance_rounded),
+                                        label: Text("Photo")),
+                                  RaisedButton.icon(
+                                        onPressed: () {
+                                          _takePicture(article, fromCamera: false);
+                                        },
+                                        icon: Icon(Icons.folder),
+                                        label: Text("Gallerie")),
+
+                                  ],
+                                )
                                 : Column(
                                   children: [
                                     FutureBuilder(
@@ -246,8 +258,8 @@ class ArticlePageState extends State<ArticlePage> {
     }
   }
 
-  Future<void> _takePicture(Article article) async {
-    final pickedFile = await _picker.getImage(source: ImageSource.camera);
+  Future<void> _takePicture(Article article, { bool fromCamera = true }) async {
+    final pickedFile = await _picker.getImage(source: fromCamera ? ImageSource.camera : ImageSource.gallery);
 
     if (pickedFile != null) {
       int imageId = await HttpHelper.postPicture(File(pickedFile.path));
