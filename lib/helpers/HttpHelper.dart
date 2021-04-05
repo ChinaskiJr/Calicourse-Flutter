@@ -10,9 +10,9 @@ import 'package:calicourse_front/models/Shop.dart';
 
 class HttpHelper {
   // Dev
-  static const apiBaseUrl = "http://10.0.2.2:3000/index.php/api";
+  // static const apiBaseUrl = "http://10.0.2.2:3000/index.php/api";
   // Prod
-  // static const apiBaseUrl               = "https://calicourse.robin-colombier.com/api";
+  static const apiBaseUrl = "https://calicourse.robin-colombier.com/api";
   static const apiGetParamShops = "/shops";
   static const apiGetParamArticles = "/articles";
   static const apiParamBought = "bought";
