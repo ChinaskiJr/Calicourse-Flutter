@@ -79,15 +79,28 @@ class ArticlePageState extends State<ArticlePage> {
                                     },
                                     icon: Icon(Icons.camera_enhance_rounded),
                                     label: Text("Prendre une photo"))
-                                : FutureBuilder(
-                                    future: _loadImage(article.image),
-                                    builder: (ctx, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return CircularProgressIndicator();
-                                      } else {
-                                        return Image.network(snapshot.data);
-                                      }
-                                    })
+                                : Column(
+                                  children: [
+                                    FutureBuilder(
+                                        future: _loadImage(article.image),
+                                        builder: (ctx, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return CircularProgressIndicator();
+                                          } else {
+                                            return Image.network(snapshot.data);
+                                          }
+                                        }),
+                                    RaisedButton.icon(onPressed: () {
+                                      _deletePicture(article);
+                                    }, icon: Icon(Icons.delete),
+                                      label: Text("Supprimer la photo"),
+                                      color: Colors.red,
+                                      splashColor: Colors.white,
+                                      textColor: Colors.white,
+                                    ),
+
+                                  ],
+                                )
                                  : Container(),
                             TextFormField(
                               controller: _titleFieldConstructor,
@@ -251,5 +264,11 @@ class ArticlePageState extends State<ArticlePage> {
     } else {
       return "https://calicourse.robin-colombier.com/" + uri;
     }
+  }
+
+  Future<void> _deletePicture(Article article) async {
+    article.image = null;
+    await this._processPutArticle(article);
+    setState(() {});
   }
 }
