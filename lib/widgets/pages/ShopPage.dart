@@ -145,7 +145,8 @@ class _ShopPageState extends State<ShopPage> {
                         },
                         child: GestureDetector(
                           onTap: () {
-                            if (articlesNotBought[index].comment.isNotEmpty) {
+                            if (articlesNotBought[index].comment.isNotEmpty
+                                || articlesNotBought[index].image != null) {
                               return showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -204,7 +205,8 @@ class _ShopPageState extends State<ShopPage> {
                                       ),
                                     ),
                                   ),
-                                  (articlesNotBought[index].comment.isNotEmpty)
+                                  (articlesNotBought[index].comment.isNotEmpty
+                                      || articlesNotBought[index].image != null)
                                     ? Center(
                                         child: Icon(
                                           Icons.info_outline,
@@ -275,7 +277,8 @@ class _ShopPageState extends State<ShopPage> {
                         },
                         child: GestureDetector(
                           onTap: () {
-                            if (articlesBought[index].comment.isNotEmpty) {
+                            if (articlesBought[index].comment.isNotEmpty
+                                || articlesBought[index].image != null) {
                               return showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -297,7 +300,7 @@ class _ShopPageState extends State<ShopPage> {
                                           Padding(
                                             padding: EdgeInsets.all(12.0),
                                             child: Text(
-                                              articlesNotBought[index].comment,
+                                              articlesBought[index].comment,
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -336,7 +339,8 @@ class _ShopPageState extends State<ShopPage> {
                                       ),
                                     ),
                                   ),
-                                  (articlesBought[index].comment.isNotEmpty)
+                                  (articlesBought[index].comment.isNotEmpty
+                                      || articlesBought[index].image != null)
                                     ? Center(
                                     child: Icon(
                                       Icons.info_outline,
