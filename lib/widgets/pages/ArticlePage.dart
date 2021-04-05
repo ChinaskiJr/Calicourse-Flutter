@@ -71,7 +71,8 @@ class ArticlePageState extends State<ArticlePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            article.image == null
+                            (article != null)
+                            ? article.image == null
                                 ? RaisedButton.icon(
                                     onPressed: () {
                                       _takePicture(article);
@@ -86,7 +87,8 @@ class ArticlePageState extends State<ArticlePage> {
                                       } else {
                                         return Image.network(snapshot.data);
                                       }
-                                    }),
+                                    })
+                                 : Container(),
                             TextFormField(
                               controller: _titleFieldConstructor,
                               decoration: const InputDecoration(
