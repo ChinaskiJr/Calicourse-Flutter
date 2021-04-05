@@ -7,6 +7,7 @@ import 'package:calicourse_front/models/Shop.dart';
 import 'package:calicourse_front/parameters/parameters.dart';
 import 'package:calicourse_front/widgets/custom_widgets/FatalAlertDialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -150,12 +151,27 @@ class _ShopPageState extends State<ShopPage> {
                                 builder: (BuildContext context) {
                                   return SimpleDialog(
                                     children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Text(
-                                          articlesNotBought[index].comment,
-                                          textAlign: TextAlign.center,
-                                        ),
+                                      Column(
+                                        children: [
+                                          (articlesNotBought[index].image != null)
+                                          ? FutureBuilder(
+                                            future: _loadImage(articlesNotBought[index].image),
+                                            builder: (ctx, snapshot) {
+                                              if (!snapshot.hasData) {
+                                                return CircularProgressIndicator();
+                                              } else {
+                                                return Image.network(snapshot.data);
+                                              }
+                                            })
+                                              : Container(),
+                                          Padding(
+                                            padding: EdgeInsets.all(12.0),
+                                            child: Text(
+                                              articlesNotBought[index].comment,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   );
@@ -265,12 +281,27 @@ class _ShopPageState extends State<ShopPage> {
                                 builder: (BuildContext context) {
                                   return SimpleDialog(
                                     children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Text(
-                                          articlesBought[index].comment,
-                                          textAlign: TextAlign.center,
-                                        ),
+                                      Column(
+                                        children: [
+                                          (articlesBought[index].image != null)
+                                              ? FutureBuilder(
+                                              future: _loadImage(articlesBought[index].image),
+                                              builder: (ctx, snapshot) {
+                                                if (!snapshot.hasData) {
+                                                  return CircularProgressIndicator();
+                                                } else {
+                                                  return Image.network(snapshot.data);
+                                                }
+                                              })
+                                              : Container(),
+                                          Padding(
+                                            padding: EdgeInsets.all(12.0),
+                                            child: Text(
+                                              articlesNotBought[index].comment,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   );
@@ -404,6 +435,15 @@ class _ShopPageState extends State<ShopPage> {
       this.mytimer = Timer.periodic(Duration(seconds: 2), (timer) {
         _updateArticles(shopId);
       });
+    }
+  }
+
+  Future<void> _loadImage(String imageUri) async {
+    String uri = await HttpHelper.getPicture(imageUri);
+    if (kDebugMode) {
+      return "http://10.0.2.2:3000/" + uri;
+    } else {
+      return "https://calicourse.robin-colombier.com/" + uri;
     }
   }
 }
