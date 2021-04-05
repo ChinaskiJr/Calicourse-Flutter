@@ -64,7 +64,9 @@ class Article {
     json['bought'] = this.bought;
     json['archived'] = this.archived;
     json['createdAt'] = this.createdAt.toString();
-    json['boughtAt'] = this.boughtAt ?? null;
+    if (this.boughtAt != null) {
+      json['boughtAt'] = this.boughtAt.toString();
+    }
     json['image'] = this.image ?? null;
     json['comment'] = this.comment ?? null;
     return json;
