@@ -259,7 +259,12 @@ class ArticlePageState extends State<ArticlePage> {
   }
 
   Future<void> _takePicture(Article article, { bool fromCamera = true }) async {
-    final pickedFile = await _picker.getImage(source: fromCamera ? ImageSource.camera : ImageSource.gallery);
+    final pickedFile = await _picker.getImage(
+      source: fromCamera ? ImageSource.camera : ImageSource.gallery,
+      imageQuality: 85,
+      maxHeight: 800,
+      maxWidth: 800
+    );
 
     if (pickedFile != null) {
       int imageId = await HttpHelper.postPicture(File(pickedFile.path));
