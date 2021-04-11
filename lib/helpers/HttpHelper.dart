@@ -277,6 +277,23 @@ class HttpHelper {
     }
   }
 
+  static Future<void> deletePicture(String uri) async {
+    http.Response response = await http.get(
+        apiBaseUrl +
+            uri.replaceFirst('/index.php', '').replaceFirst('/api', ''),
+        headers: {"X-AUTH-TOKEN": await HttpHelper.loadApiKey()});
+    if (response.statusCode == HttpStatus.unauthorized ||
+        response.statusCode == HttpStatus.forbidden) {
+      throw ApiConnectionException("Veuiller entrer une clé API valide");
+    } else if (response.statusCode != HttpStatus.ok) {
+      throw HttpException(
+          "Impossible de supprimer cette photo (code HTTP retourné : ${response.statusCode})");
+    } else {
+      var jsonResponse = convert.jsonDecode(response.body);
+      return jsonResponse['contentUrl'];
+    }
+  }
+
   static Future<String> loadApiKey() async {
     final storage = FlutterSecureStorage();
 
